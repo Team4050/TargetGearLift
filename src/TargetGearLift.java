@@ -135,9 +135,6 @@ public class TargetGearLift {
                     // Score each pair combination
                     for (int i = 0; i < (contourCount - 1); i++) {
                         for (int j = i+1; j < contourCount; j++) {
-                            contourScores[scoreIndex][0] = i;
-                            contourScores[scoreIndex][1] = j;
-                            
                             double ratio = 0.0;
                             int testIndex = 2;
                             
@@ -151,6 +148,9 @@ public class TargetGearLift {
                                 leftIndex = j;
                                 rightIndex = i;
                             }
+                            
+                            contourScores[scoreIndex][0] = leftIndex;
+                            contourScores[scoreIndex][1] = rightIndex;
                             
                             double leftX = rect[leftIndex].x;
                             double leftY = rect[leftIndex].y;
@@ -250,16 +250,14 @@ public class TargetGearLift {
                     }
                     
                     if (bestPairIndex > -1) {
-                    System.out.println(contourScores[bestPairIndex][0] + " | " + contourScores[bestPairIndex][1] + " | " +
-                                       (contourScores[bestPairIndex][2] + contourScores[bestPairIndex][3] +
-                                        contourScores[bestPairIndex][4] + contourScores[bestPairIndex][5] +
-                                        contourScores[bestPairIndex][6]) + " | " +
-                                       contourScores[bestPairIndex][2] + " | " + contourScores[bestPairIndex][3] + " | " +
-                                       contourScores[bestPairIndex][4] + " | " + contourScores[bestPairIndex][5] + " | " +
-                                       contourScores[bestPairIndex][6]);
+                        System.out.println(contourScores[bestPairIndex][0] + " | " + contourScores[bestPairIndex][1] + " | " +
+                                           (contourScores[bestPairIndex][2] + contourScores[bestPairIndex][3] +
+                                            contourScores[bestPairIndex][4] + contourScores[bestPairIndex][5] +
+                                            contourScores[bestPairIndex][6]) + " | " +
+                                           contourScores[bestPairIndex][2] + " | " + contourScores[bestPairIndex][3] + " | " +
+                                           contourScores[bestPairIndex][4] + " | " + contourScores[bestPairIndex][5] + " | " +
+                                           contourScores[bestPairIndex][6]);
                     }
-                    
-                    
                     
                     /******************************************************************
                      * Draw pair of contours that are target candidate.
