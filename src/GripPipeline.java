@@ -1,18 +1,13 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.HashMap;
 
-import org.opencv.core.*;
-import org.opencv.core.Core.*;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.*;
-import org.opencv.objdetect.*;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 /**
 * GripPipeline class.
@@ -62,9 +57,23 @@ public class GripPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = cvErodeOutput;
+		
+		/***********************************
+		 * Painter's tape values
+		 ***********************************
+	    double[] hsvThresholdHue = {105.21582733812949, 136.9965870307167};
+	    double[] hsvThresholdSaturation = {128.41726618705036, 255.0};
+	    double[] hsvThresholdValue = {100.0, 255.0};
+        /***********************************/
+
+        /***********************************
+         * Retro tape values
+         ***********************************/
 		double[] hsvThresholdHue = {89.02877697841726, 129.3174061433447};
 		double[] hsvThresholdSaturation = {178.86690647482015, 255.0};
 		double[] hsvThresholdValue = {59.62230215827338, 255.0};
+        /***********************************/
+
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
