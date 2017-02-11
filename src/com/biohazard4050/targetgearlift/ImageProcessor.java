@@ -1,7 +1,9 @@
-import org.opencv.core.Mat;
+package com.biohazard4050.targetgearlift;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+
+import org.opencv.core.Mat;
 
 public class ImageProcessor {
 	

@@ -1,4 +1,6 @@
-import javax.swing.*;
+package com.biohazard4050.targetgearlift;
+
+import javax.swing.JFrame;
 
 public class GUI extends JFrame {
 

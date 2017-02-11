@@ -1,3 +1,5 @@
+package com.biohazard4050.targetgearlift;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +63,9 @@ public class GripPipeline {
 		/***********************************
 		 * Painter's tape values
 		 ***********************************
-	    double[] hsvThresholdHue = {105.21582733812949, 136.9965870307167};
-	    double[] hsvThresholdSaturation = {128.41726618705036, 255.0};
-	    double[] hsvThresholdValue = {100.0, 255.0};
+	    double[] hsvThresholdHue = {100.21582733812949, 158.9965870307167};
+	    double[] hsvThresholdSaturation = {64.41726618705036, 255.0};
+	    double[] hsvThresholdValue = {67.0, 255.0};
         /***********************************/
 
         /***********************************
