@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+
 //TODO: Ignore targets more than X feet away.
 
 public class TargetGearLift {
@@ -40,6 +42,11 @@ public class TargetGearLift {
     }
 
     private void runMainLoop() {
+        // Set up NetworkTable
+        NetworkTable.setIPAddress("localhost");
+        NetworkTable.setClientMode();
+        NetworkTable table = NetworkTable.getTable("/RPiVision");
+
         hudImageLabel = new JLabel();
 
         hudFrame = new GUI("HUD Frame", 400, 400, true, true); //false);
@@ -75,22 +82,34 @@ public class TargetGearLift {
                     
                     Rect[] rect = new Rect[contourCount];
                     
+                    int rectCount = 0;
+                    //int rectCount = contourCount;
+                    
                     // Create bounding rectangle for each contour
                     for (int i = 0; i < contourCount; i++) {
                         MatOfPoint points = new MatOfPoint(contourArray.get(i));
-                        rect[i] = Imgproc.boundingRect(points);
+                        //rect[i] = Imgproc.boundingRect(points);
+                        
+                        Rect tempRect = Imgproc.boundingRect(points);
+                       
+                        // Only include rectangles that are at least partially
+                        // in the bottom half of the frame
+                        if (tempRect.br().y > (VIDEO_HEIGHT / 2.0)) {
+                            rect[rectCount] = tempRect;
+                            rectCount += 1;
+                        }
                     }
                     
                     // Calculate the number of pair combinations
-                    int numOfPairs = ( (contourCount - 1) * contourCount) / 2;
+                    int numOfPairs = ( (rectCount - 1) * rectCount) / 2;
                    
                     TargetCandidate[] rectCandidates = new TargetCandidate[numOfPairs];
                     
                     int scoreIndex = 0; 
 
                     // Score each pair combination
-                    for (int i = 0; i < (contourCount - 1); i++) {
-                        for (int j = i+1; j < contourCount; j++) {
+                    for (int i = 0; i < (rectCount - 1); i++) {
+                        for (int j = i+1; j < rectCount; j++) {
                             rectCandidates[scoreIndex] = new TargetCandidate(rect[i], rect[j], i, j);
                             scoreIndex++;
                         }
@@ -126,6 +145,7 @@ public class TargetGearLift {
                         double leftRectRightX = rect[targetIndex1].x + rect[targetIndex1].width;
                         double rightRectLeftX = rect[targetIndex2].x;
 
+                        // These are the values to show in the HUD and to send to NetworkTable
                         double targetCenterX = ( (rightRectLeftX - leftRectRightX) / 2.0) + leftRectRightX;
                         double targetOffset = Math.abs(frameCenterX - targetCenterX);
                         double distance = estimatedDistance(rect[targetIndex1].height, rect[targetIndex2].height);
@@ -134,6 +154,8 @@ public class TargetGearLift {
 
                         hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT, rect[targetIndex1], rect[targetIndex2],
                                          targetCenterX, targetOffset, heightRatioLvR, heightRatioRvL, distance);
+
+                        WriteToNetworkTable(table, targetCenterX, targetOffset, heightRatioLvR, heightRatioRvL, distance);
                     }
                     
                     Mat augmentedImage = webcamMat.clone();
@@ -152,7 +174,7 @@ public class TargetGearLift {
                     break;
                 }
                 /**********************************************
-                 * Used for estimating FPS/
+                 * Used for estimating FPS
                  **********************************************
                 double tickCount = (double)Core.getTickCount();
                 double tickFreq = Core.getTickFrequency();
@@ -174,5 +196,14 @@ public class TargetGearLift {
         }
 
         return distance;
+    }
+    
+    private void WriteToNetworkTable(NetworkTable table, double targetCenterX, double targetOffset,
+                                     double heightRatioLvR, double heightRatioRvL, double distance) {
+        table.putNumber("targetCenterX", targetCenterX);
+        table.putNumber("targetOffset", targetOffset);
+        table.putNumber("distance", distance);
+        table.putNumber("heightRatioLvR", heightRatioLvR);
+        table.putNumber("heightRatioRvL", heightRatioRvL);
     }
 }

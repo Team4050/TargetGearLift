@@ -15,7 +15,7 @@ public class HUD extends Mat {
         this.setTo(new Scalar(0));
         
         double frameCenterX = (videoWidth / 2.0);
-        Imgproc.line(this, new Point(frameCenterX, 0), new Point(frameCenterX, videoHeight-1), new Scalar(0, 0, 255), 1);
+        Imgproc.line(this, new Point(frameCenterX, 0), new Point(frameCenterX, videoHeight-1), new Scalar(0, 0, 255), 2);
     }
 
     public HUD(double videoWidth, double videoHeight, Rect rectL, Rect rectR, double targetCenterX, double targetOffset,
@@ -55,7 +55,7 @@ public class HUD extends Mat {
         Scalar centerLineColor = NearnessColor(targetOffset);
         
         // Draw color-coordinated vertical line in middle of frame
-        Imgproc.line(this, new Point(frameCenterX, 0), new Point(frameCenterX, videoHeight-1), centerLineColor, 1);
+        Imgproc.line(this, new Point(frameCenterX, 0), new Point(frameCenterX, videoHeight-1), centerLineColor, 2);
     }
 
     private Scalar NearnessColor(double targetOffset) {
