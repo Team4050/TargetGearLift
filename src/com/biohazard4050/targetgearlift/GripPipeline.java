@@ -27,6 +27,17 @@ public class GripPipeline {
 	private Mat hsvThresholdOutput = new Mat();
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 
+	/************************************************
+	 * Team 4050 : Added to adjust values dynamically
+	 ************************************************/
+	private double hsvMinHue;
+	private double hsvMinSat;
+	private double hsvMinVal;
+    private double hsvMaxHue;
+    private double hsvMaxSat;
+    private double hsvMaxVal;
+    /************************************************/
+
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
@@ -70,11 +81,15 @@ public class GripPipeline {
 
         /***********************************
          * Retro tape values
-         ***********************************/
+         ***********************************
 		double[] hsvThresholdHue = {89.02877697841726, 129.3174061433447};
 		double[] hsvThresholdSaturation = {178.86690647482015, 255.0};
 		double[] hsvThresholdValue = {59.62230215827338, 255.0};
         /***********************************/
+
+	    double[] hsvThresholdHue = {hsvMinHue, hsvMaxHue};
+	    double[] hsvThresholdSaturation = {hsvMinSat, hsvMaxSat};
+	    double[] hsvThresholdValue = {hsvMinVal, hsvMaxVal};
 
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
@@ -84,6 +99,18 @@ public class GripPipeline {
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
 	}
+
+    /************************************************
+     * Team 4050 : Added to adjust values dynamically
+     ************************************************/
+    public void setHSV(double minHue, double minSat, double minVal, double maxHue, double maxSat, double maxVal) {
+        hsvMinHue = minHue;
+        hsvMinSat = minSat;
+        hsvMinVal = minVal;
+        hsvMaxHue = maxHue;
+        hsvMaxSat = maxSat;
+        hsvMaxVal = maxVal;
+    }
 
 	/**
 	 * This method is a generated getter for the output of a New_Size.
@@ -124,8 +151,7 @@ public class GripPipeline {
 	public ArrayList<MatOfPoint> findContoursOutput() {
 		return findContoursOutput;
 	}
-
-
+	
 	/**
 	 * Fills a size with given width and height.
 	 * @param width the width of the size
