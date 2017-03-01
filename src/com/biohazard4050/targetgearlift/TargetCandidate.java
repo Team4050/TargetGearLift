@@ -2,8 +2,6 @@ package com.biohazard4050.targetgearlift;
 
 import org.opencv.core.Rect;
 
-//TODO: Take relative area of rectangle into account. Larger score higher.
-
 public class TargetCandidate {
 
     // "Gettable" properties

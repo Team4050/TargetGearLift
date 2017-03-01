@@ -18,6 +18,21 @@ import org.opencv.imgproc.Imgproc;
 *
 * @author GRIP
 */
+
+/***********************************
+ * Painter's tape values
+ ***********************************
+ * Hue : 100.2158, 158.9965
+ * Sat :  64.4172, 255.0
+ * Val :  67.0   , 255.0
+ ***********************************
+ * Retro tape values
+ ***********************************
+ * Hue :  89.0287, 129.3174
+ * Sat : 178.8669, 255.0
+ * Val :  59.6223, 255.0
+/***********************************/
+
 public class GripPipeline {
 
 	//Outputs
@@ -71,22 +86,6 @@ public class GripPipeline {
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = cvErodeOutput;
 		
-		/***********************************
-		 * Painter's tape values
-		 ***********************************
-	    double[] hsvThresholdHue = {100.21582733812949, 158.9965870307167};
-	    double[] hsvThresholdSaturation = {64.41726618705036, 255.0};
-	    double[] hsvThresholdValue = {67.0, 255.0};
-        /***********************************/
-
-        /***********************************
-         * Retro tape values
-         ***********************************
-		double[] hsvThresholdHue = {89.02877697841726, 129.3174061433447};
-		double[] hsvThresholdSaturation = {178.86690647482015, 255.0};
-		double[] hsvThresholdValue = {59.62230215827338, 255.0};
-        /***********************************/
-
 	    double[] hsvThresholdHue = {hsvMinHue, hsvMaxHue};
 	    double[] hsvThresholdSaturation = {hsvMinSat, hsvMaxSat};
 	    double[] hsvThresholdValue = {hsvMinVal, hsvMaxVal};
