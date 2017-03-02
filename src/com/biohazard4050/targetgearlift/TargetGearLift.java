@@ -19,7 +19,13 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import javax.swing.*;
+import java.awt.*;
+import java.io.DataOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class TargetGearLift {
     static {
@@ -58,6 +64,8 @@ public class TargetGearLift {
     private boolean runHeadless = true;
     
     public static void main(String[] args) {
+
+
         a.runMainLoop();
     }
 

@@ -1,20 +1,55 @@
 # Created by .ignore support plugin (hsz.mobi)
-### Eclipse template
+### FIRST template
+# WPILib
+bin/
+build/
+dist/
+sysProps.xml
+workbench.xmi
+
+# IDE
+*.ipr
+*.iml
+*.iws
+out/
+tmp/
+.settings/
+.loadpath
+.project
+/.idea
+.classpath
+
+# Toast/GradleRIO
+run/
+.gradle/
+gradle/.launch/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.AppleDouble
+.LSOverride
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# backup files
+*~
+
+# directory for XML generated after running junit tests through ant
+junit/### Eclipse template
 
 .metadata
-bin/
-tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
-.settings/
-.loadpath
 .recommenders
 
 # Eclipse Core
-.project
 
 # External tool builders
 .externalToolBuilders/
@@ -29,7 +64,6 @@ local.properties
 .cproject
 
 # JDT-specific (Eclipse Java Development Tools)
-.classpath
 
 # Java annotation processor (APT)
 .factorypath
@@ -76,7 +110,6 @@ local.properties
 .idea/mongoSettings.xml
 
 ## File-based project format:
-*.iws
 
 ## Plugin-specific files:
 
@@ -94,6 +127,3 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
-
-.idea/
-/bin/
