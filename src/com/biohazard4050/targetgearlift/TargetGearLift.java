@@ -1,16 +1,6 @@
 package com.biohazard4050.targetgearlift;
 
-import java.awt.Image;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -22,6 +12,7 @@ import org.opencv.videoio.Videoio;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DecimalFormat;
@@ -32,48 +23,80 @@ public class TargetGearLift {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    private static final double VIDEO_WIDTH  = 640.0;
-    private static final double VIDEO_HEIGHT = 360.0;
-
-    private static final String CAPTURE_STATUS_STREAM  = "STREAM";
-    private static final String CAPTURE_STATUS_RESTART = "RESTART";
-    private static final String CAPTURE_STATUS_STOP    = "STOP";
-
-    private static final int MIN_ACCEPTED_SCORE = 250;
-
     private static TargetGearLift a = new TargetGearLift();
     private ImageProcessor imp = new ImageProcessor();
     private Mat webcamMat = new Mat();
     private GripPipeline imagePipeline = new GripPipeline();
+    private GlobalVariables gv = new GlobalVariables();
 
-    // Used if not running headless
     private GUI hudFrame;
     private JLabel hudImageLabel;
 
-    // NetworkTable values from roboRIO
-    private boolean showHSV = false;
-    private double exposure = 0.0;
-    private double minHue = 0.0;
-    private double minSat = 0.0;
-    private double minVal = 0.0;
-    private double maxHue = 0.0;
-    private double maxSat = 0.0;
-    private double maxVal = 0.0;
+
+
+    //Global Vars
+    private String roborioIPAddress;
+    private String ntName;
+
+    private double VIDEO_WIDTH;
+    private double VIDEO_HEIGHT;
+
+    private String CAPTURE_STATUS_STREAM;
+    private String CAPTURE_STATUS_RESTART;
+    private String CAPTURE_STATUS_STOP;
+
+    private int MIN_ACCEPTED_SCORE;
+
+    private boolean showHSV;
+    private double exposure;
+    private double minHue;
+    private double minSat;
+    private double minVal;
+    private double maxHue;
+    private double maxSat;
+    private double maxVal;
     private String streamStatus;
 
-    private boolean runHeadless = true;
-    
+    private boolean headless;
+
+
     public static void main(String[] args) {
 
-
+        a.initVar();
         a.runMainLoop();
+    }
+
+    private void initVar() {
+        roborioIPAddress = gv.getRoborioIPAddress();
+        ntName = gv.getNtName();
+
+        VIDEO_WIDTH = gv.getVIDEO_WIDTH();
+        VIDEO_HEIGHT = gv.getVIDEO_HEIGHT();
+
+        CAPTURE_STATUS_STREAM = gv.getCAPTURE_STATUS_STREAM();
+        CAPTURE_STATUS_RESTART = gv.getCAPTURE_STATUS_RESTART();
+        CAPTURE_STATUS_STOP = gv.getCAPTURE_STATUS_STOP();
+
+        MIN_ACCEPTED_SCORE = gv.getMIN_ACCEPTED_SCORE();
+
+        showHSV = gv.isHSV();
+        exposure = gv.getExposure();
+        minHue = gv.getMinHue();
+        minSat = gv.getMinSat();
+        minVal = gv.getMinVal();
+        maxHue = gv.getMaxHue();
+        maxSat = gv.getMaxSat();
+        maxVal = gv.getMaxVal();
+        streamStatus = gv.getStreamStatus();
+
+        headless = gv.isHeadless();
     }
 
     private void runMainLoop() {
         // Set up NetworkTable
-        NetworkTable.setIPAddress("localhost");
+        NetworkTable.setIPAddress(roborioIPAddress);
         NetworkTable.setClientMode();
-        NetworkTable table = NetworkTable.getTable("/RPiVision");
+        NetworkTable table = NetworkTable.getTable(ntName);
 
         /************************************************************
          * Prime the read values. These will come from RoboRIO later.
@@ -89,7 +112,7 @@ public class TargetGearLift {
         table.putString("rioStatus", CAPTURE_STATUS_STREAM);
         /************************************************************/
 
-        if (!runHeadless) {
+        if (!headless) {
             hudImageLabel = new JLabel();
 
             hudFrame = new GUI("HUD Frame", 400, 400, true, false);
@@ -228,7 +251,7 @@ public class TargetGearLift {
                                 Core.bitwise_or(augmentedImage, hudMat, augmentedImage);
                             }
                     
-                            if (!runHeadless) {
+                            if (!headless) {
                                 // Convert HUD to image to display in JLabel
                                 Image hudImage = imp.toBufferedImage(augmentedImage);
                                 ImageIcon hudImageIcon = new ImageIcon(hudImage, "Augmented Image");
