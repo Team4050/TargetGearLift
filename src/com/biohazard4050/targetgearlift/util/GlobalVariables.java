@@ -1,30 +1,32 @@
-package com.biohazard4050.targetgearlift;
+package com.biohazard4050.targetgearlift.util;
 
 public class GlobalVariables {
 
-    private String roborioIPAddress = "10.40.50.4";
-    private String ntName = "Vision";
+    private static String roborioIPAddress;
+    private static String ntName;
 
-    private double VIDEO_WIDTH  = 640.0;
-    private double VIDEO_HEIGHT = 360.0;
+    private static int CaptureDevice;
 
-    private String CAPTURE_STATUS_STREAM  = "STREAM";
-    private String CAPTURE_STATUS_RESTART = "RESTART";
-    private String CAPTURE_STATUS_STOP    = "STOP";
+    private static double VIDEO_WIDTH;
+    private static double VIDEO_HEIGHT;
 
-    private int MIN_ACCEPTED_SCORE = 250;
+    private static String CAPTURE_STATUS_STREAM;
+    private static String CAPTURE_STATUS_RESTART;
+    private static String CAPTURE_STATUS_STOP;
 
-    private boolean HSV = false;
-    private double exposure = 0.0;
-    private double minHue = 0.0;
-    private double minSat = 0.0;
-    private double minVal = 0.0;
-    private double maxHue = 0.0;
-    private double maxSat = 0.0;
-    private double maxVal = 0.0;
-    private String streamStatus;
+    private static int MIN_ACCEPTED_SCORE;
 
-    private boolean headless = false;
+    private static boolean HSVShown;
+    private static double exposure;
+    private static double minHue;
+    private static double minSat;
+    private static double minVal;
+    private static double maxHue;
+    private static double maxSat;
+    private static double maxVal;
+    private static String streamStatus;
+
+    private static boolean headless;
 
 
     public String getRoborioIPAddress() {
@@ -91,12 +93,12 @@ public class GlobalVariables {
         this.MIN_ACCEPTED_SCORE = MIN_ACCEPTED_SCORE;
     }
 
-    public boolean isHSV() {
-        return HSV;
+    public boolean isHSVShown() {
+        return HSVShown;
     }
 
-    public void setHSV(boolean HSV) {
-        this.HSV = HSV;
+    public void setHSVShown(boolean HSVShown) {
+        this.HSVShown = HSVShown;
     }
 
     public double getExposure() {
@@ -169,5 +171,13 @@ public class GlobalVariables {
 
     public void setHeadless(boolean headless) {
         this.headless = headless;
+    }
+
+    public int getCaptureDevice() {
+        return CaptureDevice;
+    }
+
+    public void setCaptureDevice(int captureDevice) {
+        CaptureDevice = captureDevice;
     }
 }
