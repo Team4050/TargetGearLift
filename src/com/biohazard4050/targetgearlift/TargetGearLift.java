@@ -43,7 +43,7 @@ public class TargetGearLift {
     private String roborioIPAddress;
     private String ntName;
 
-    private int CaptureDevice;
+    private int captureDevice;
 
     private double VIDEO_WIDTH;
     private double VIDEO_HEIGHT;
@@ -92,7 +92,7 @@ public class TargetGearLift {
         roborioIPAddress = gv.getRoborioIPAddress();
         ntName = gv.getNtName();
 
-        CaptureDevice = gv.getCaptureDevice();
+        captureDevice = gv.getCaptureDevice();
 
         VIDEO_WIDTH = gv.getVIDEO_WIDTH();
         VIDEO_HEIGHT = gv.getVIDEO_HEIGHT();
@@ -119,7 +119,7 @@ public class TargetGearLift {
         System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
         System.out.println("       Network Table Name = " + ntName);
         System.out.println("       Headless Mode Enabled = " + Boolean.toString(headless));
-        System.out.println("       Capture Device = " + Integer.toString(CaptureDevice));
+        System.out.println("       Capture Device = " + Integer.toString(captureDevice));
         System.out.println("       Video Width = " + Double.toString(VIDEO_WIDTH));
         System.out.println("       Video Height = " + Double.toString(VIDEO_HEIGHT));
         System.out.println("       Capture Status Stream = " + CAPTURE_STATUS_STREAM);
@@ -185,7 +185,7 @@ public class TargetGearLift {
                     table.putString("rioStatus", streamStatus);
                 }
 
-                VideoCapture capture = new VideoCapture(1);
+                VideoCapture capture = new VideoCapture(captureDevice);
 
                 capture.set(Videoio.CAP_PROP_FRAME_WIDTH, VIDEO_WIDTH);
                 capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, VIDEO_HEIGHT);
