@@ -1,5 +1,9 @@
 package com.biohazard4050.targetgearlift;
 
+import com.biohazard4050.targetgearlift.util.GUI;
+import com.biohazard4050.targetgearlift.util.GlobalVariables;
+import com.biohazard4050.targetgearlift.util.RTSettings;
+import com.github.lalyos.jfiglet.FigletFont;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,6 +28,7 @@ public class TargetGearLift {
     }
 
     private static TargetGearLift a = new TargetGearLift();
+    private static RTSettings s = new RTSettings();
     private ImageProcessor imp = new ImageProcessor();
     private Mat webcamMat = new Mat();
     private GripPipeline imagePipeline = new GripPipeline();
@@ -37,6 +42,8 @@ public class TargetGearLift {
     //Global Vars
     private String roborioIPAddress;
     private String ntName;
+
+    private int CaptureDevice;
 
     private double VIDEO_WIDTH;
     private double VIDEO_HEIGHT;
@@ -61,7 +68,22 @@ public class TargetGearLift {
 
 
     public static void main(String[] args) {
-
+        String asciiArt1 = null;
+        String asciiArt2 = null;
+        try {
+            asciiArt1 = FigletFont.convertOneLine("BIOHAZARD VISION");
+            asciiArt2 = FigletFont.convertOneLine("Eye See You     o.O");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(asciiArt1);
+        System.out.println(asciiArt2);
+        if(args.length > 0) {
+            if(args[0].equals("-config")) {
+                System.out.println("[DEBUG] Initiating Read from Config");
+                s.applyFileData(args[1]);
+            }
+        }
         a.initVar();
         a.runMainLoop();
     }
@@ -69,6 +91,8 @@ public class TargetGearLift {
     private void initVar() {
         roborioIPAddress = gv.getRoborioIPAddress();
         ntName = gv.getNtName();
+
+        CaptureDevice = gv.getCaptureDevice();
 
         VIDEO_WIDTH = gv.getVIDEO_WIDTH();
         VIDEO_HEIGHT = gv.getVIDEO_HEIGHT();
@@ -79,7 +103,7 @@ public class TargetGearLift {
 
         MIN_ACCEPTED_SCORE = gv.getMIN_ACCEPTED_SCORE();
 
-        showHSV = gv.isHSV();
+        showHSV = gv.isHSVShown();
         exposure = gv.getExposure();
         minHue = gv.getMinHue();
         minSat = gv.getMinSat();
@@ -90,6 +114,29 @@ public class TargetGearLift {
         streamStatus = gv.getStreamStatus();
 
         headless = gv.isHeadless();
+
+        System.out.println("[INFO] Prepare to be slammed with some of the most hard hitting facts you'll see all day!");
+        System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
+        System.out.println("       Network Table Name = " + ntName);
+        System.out.println("       Headless Mode Enabled = " + Boolean.toString(headless));
+        System.out.println("       Capture Device = " + Integer.toString(CaptureDevice));
+        System.out.println("       Video Width = " + Double.toString(VIDEO_WIDTH));
+        System.out.println("       Video Height = " + Double.toString(VIDEO_HEIGHT));
+        System.out.println("       Capture Status Stream = " + CAPTURE_STATUS_STREAM);
+        System.out.println("       Capture Status Restart = " + CAPTURE_STATUS_RESTART);
+        System.out.println("       Capture Status Stop = " + CAPTURE_STATUS_STOP);
+        System.out.println("       Minimum Accepted Score = " + Integer.toString(MIN_ACCEPTED_SCORE));
+        System.out.println("       HSV Overlay Enabled = " + Boolean.toString(showHSV));
+        System.out.println("       Exposure = " + Double.toString(exposure));
+        System.out.println("       Minimum Hue = " + Double.toString(minHue));
+        System.out.println("       Maximum Hue = " + Double.toString(maxHue));
+        System.out.println("       Minimum Saturation = " + Double.toString(minSat));
+        System.out.println("       Maximum Saturation = " + Double.toString(maxSat));
+        System.out.println("       Minimum Value = " + Double.toString(minVal));
+        System.out.println("       Maximum Value = " + Double.toString(maxVal));
+        System.out.println("       Stream Status = " + streamStatus);
+        System.out.println("[INFO] Fact slamming over");
+
     }
 
     private void runMainLoop() {

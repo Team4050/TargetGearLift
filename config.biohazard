@@ -1,0 +1,19 @@
+#Fri Mar 03 19:33:00 EST 2017
+roborioIPAddress=127.0.0.1
+ntName=\\Vision
+headless=false
+captureDevice=0
+VIDEO_WIDTH=640.0
+VIDEO_HEIGHT=360.0
+CAPTURE_STATUS_STREAM=STREAM
+CAPTURE_STATUS_RESTART=RESTART
+CAPTURE_STATUS_STOP=STOP
+MIN_ACCEPTED_SCORE=250
+HSVShown=false
+exposure=0.0
+minHue=0.0
+maxHue=0.0
+minSat=0.0
+maxSat=0.0
+minVal=0.0
+maxVal=0.0
