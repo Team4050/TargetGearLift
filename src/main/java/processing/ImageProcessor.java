@@ -1,4 +1,4 @@
-package com.biohazard4050.targetgearlift.processing;
+package processing;
 
 import org.opencv.core.Mat;
 

@@ -1,5 +1,3 @@
-package com.biohazard4050.targetgearlift;
-
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;

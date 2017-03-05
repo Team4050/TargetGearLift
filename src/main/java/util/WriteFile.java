@@ -1,4 +1,4 @@
-package com.biohazard4050.targetgearlift.util;
+package util;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

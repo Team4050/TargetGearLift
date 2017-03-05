@@ -1,4 +1,4 @@
-package com.biohazard4050.targetgearlift.util;
+package util;
 
 import javax.swing.JFrame;
 

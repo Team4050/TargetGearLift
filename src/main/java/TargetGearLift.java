@@ -1,10 +1,8 @@
-package com.biohazard4050.targetgearlift;
-
-import com.biohazard4050.targetgearlift.processing.GripPipeline;
-import com.biohazard4050.targetgearlift.processing.ImageProcessor;
-import com.biohazard4050.targetgearlift.util.GUI;
-import com.biohazard4050.targetgearlift.util.GlobalVariables;
-import com.biohazard4050.targetgearlift.util.RTSettings;
+import processing.GripPipeline;
+import processing.ImageProcessor;
+import util.GUI;
+import util.GlobalVariables;
+import util.RTSettings;
 import com.github.lalyos.jfiglet.FigletFont;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.opencv.core.Core;
