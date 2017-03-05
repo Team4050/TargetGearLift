@@ -68,10 +68,10 @@ task writeExecuteScript() {
   doLast {
     if (buildType == "windows") {
       def runFile = new File("${buildDir}/run${projectName}.bat")
-      runFile.write "java -Djava.library.path=. -jar ${projectName}-all.jar"
+      runFile.write "java -Djava.library.path=. -jar ${projectName}-all.jar -config config.biohazard"
     } else {
       def runFile = new File("${buildDir}/run${projectName}")
-      runFile.write "java -Djava.library.path=. -jar ${projectName}-all.jar"
+      runFile.write "java -Djava.library.path=. -jar ${projectName}-all.jar -config config.biohazard"
     }
   }
 }
@@ -86,6 +86,8 @@ task copyToOutput(type: Copy) {
   from (openCvUnzipLocation) {
     exclude 'META-INF'
     exclude '**/MANIFEST.MF'
+  }
+  from ("config.biohazard") {
   }
   if (buildType == "windows") {
     from (file("${buildDir}/run${projectName}.bat")) {
@@ -103,6 +105,8 @@ task zipOutput(type: Zip) {
   dependsOn unzipOpenCv
   destinationDir = outputDirectory
   from (file(shadowJar.archivePath)) {
+  }
+  from ("config.biohazard") {
   }
   from (openCvUnzipLocation) {
     exclude 'META-INF'
