@@ -1,15 +1,10 @@
-package processing;
+package org.frc4050.targetgearlift.processing;
+
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 /**
 * GripPipeline class.
@@ -37,6 +32,7 @@ public class GripPipeline {
 
 	//Outputs
 	private Size newSizeOutput = new Size();
+	private Mat resizeOutput = new Mat();
 	private Mat cvGaussianblurOutput = new Mat();
 	private Mat cvErodeOutput = new Mat();
 	private Mat hsvThresholdOutput = new Mat();
@@ -45,6 +41,9 @@ public class GripPipeline {
 	/************************************************
 	 * Team 4050 : Added to adjust values dynamically
 	 ************************************************/
+	private double resizeWidth;
+	private double resizeHeight;
+
 	private double hsvMinHue;
 	private double hsvMinSat;
 	private double hsvMinVal;
@@ -66,8 +65,11 @@ public class GripPipeline {
 		double newSizeHeight = -1.0;
 		newSize(newSizeWidth, newSizeHeight, newSizeOutput);
 
+		int resizeInterpolation = Imgproc.INTER_CUBIC;
+		resizeImage(source0, resizeWidth, resizeHeight, resizeInterpolation, resizeOutput);
+
 		// Step CV_GaussianBlur0:
-		Mat cvGaussianblurSrc = source0;
+		Mat cvGaussianblurSrc = resizeOutput;
 		Size cvGaussianblurKsize = newSizeOutput;
 		double cvGaussianblurSigmax = 1.0;
 		double cvGaussianblurSigmay = 7.0;
@@ -102,6 +104,11 @@ public class GripPipeline {
     /************************************************
      * Team 4050 : Added to adjust values dynamically
      ************************************************/
+    public void setSize(double width, double height){
+        resizeWidth = width;
+        resizeHeight = height;
+    }
+
     public void setHSV(double minHue, double minSat, double minVal, double maxHue, double maxSat, double maxVal) {
         hsvMinHue = minHue;
         hsvMinSat = minSat;
@@ -117,6 +124,19 @@ public class GripPipeline {
 	 */
 	public Size newSizeOutput() {
 		return newSizeOutput;
+	}
+
+	/**
+	 * Scales and image to an exact size.
+	 * @param input The image on which to perform the Resize.
+	 * @param width The width of the output in pixels.
+	 * @param height The height of the output in pixels.
+	 * @param interpolation The type of interpolation.
+	 * @param output The image in which to store the output.
+	 */
+	private void resizeImage(Mat input, double width, double height,
+                             int interpolation, Mat output) {
+		Imgproc.resize(input, output, new Size(width, height), 0.0, 0.0, interpolation);
 	}
 
 	/**
@@ -172,7 +192,7 @@ public class GripPipeline {
 	 * @param dst the output image.
 	 */
 	private void cvGaussianblur(Mat src, Size kSize, double sigmaX, double sigmaY,
-		int	borderType, Mat dst) {
+                                int	borderType, Mat dst) {
 		if (kSize == null) {
 			kSize = new Size(1,1);
 		}
@@ -190,7 +210,7 @@ public class GripPipeline {
 	 * @param dst Output Image.
 	 */
 	private void cvErode(Mat src, Mat kernel, Point anchor, double iterations,
-		int borderType, Scalar borderValue, Mat dst) {
+                         int borderType, Scalar borderValue, Mat dst) {
 		if (kernel == null) {
 			kernel = new Mat();
 		}
@@ -213,7 +233,7 @@ public class GripPipeline {
 	 * @param output The image in which to store the output.
 	 */
 	private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
-	    Mat out) {
+                              Mat out) {
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
 		Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
 			new Scalar(hue[1], sat[1], val[1]), out);
@@ -227,7 +247,7 @@ public class GripPipeline {
 	 * @param output The image in which to store the output.
 	 */
 	private void findContours(Mat input, boolean externalOnly,
-		List<MatOfPoint> contours) {
+                              List<MatOfPoint> contours) {
 		Mat hierarchy = new Mat();
 		contours.clear();
 		int mode;

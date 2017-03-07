@@ -1,6 +1,6 @@
-package util;
+package org.frc4050.targetgearlift.util;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class GUI extends JFrame {
 

@@ -1,4 +1,4 @@
-package util;
+package org.frc4050.targetgearlift.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,12 +24,11 @@ public class RTSettings {
             gv.setRoborioIPAddress(prop.getProperty("roborioIPAddress"));
             gv.setNtName(prop.getProperty("ntName"));
             gv.setHeadless(Boolean.parseBoolean(prop.getProperty("headless")));
-            gv.setStreaming(Boolean.parseBoolean(prop.getProperty("streaming")));
-            gv.setStreamingPort(Integer.parseInt(prop.getProperty("streamingPort")));
             gv.setCaptureDevice(Integer.parseInt(prop.getProperty("captureDevice")));
+            gv.setResizeWidth(Double.parseDouble(prop.getProperty("ResizeWidth")));
+            gv.setResizeHeight(Double.parseDouble(prop.getProperty("ResizeHeight")));
             gv.setMIN_ACCEPTED_SCORE(Integer.parseInt(prop.getProperty("MIN_ACCEPTED_SCORE")));
             gv.setHSVShown(Boolean.parseBoolean(prop.getProperty("HSVShown")));
-            //gv.setExposure(Double.parseDouble(prop.getProperty("exposure")));
             gv.setMinHue(Double.parseDouble(prop.getProperty("minHue")));
             gv.setMaxHue(Double.parseDouble(prop.getProperty("maxHue")));
             gv.setMinSat(Double.parseDouble(prop.getProperty("minSat")));

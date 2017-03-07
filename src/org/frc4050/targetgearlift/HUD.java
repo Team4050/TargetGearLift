@@ -1,9 +1,6 @@
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+package org.frc4050.targetgearlift;
+
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
 public class HUD extends Mat {

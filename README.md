@@ -1,4 +1,4 @@
-## TargetGearLift - AKA: Biohazard's Vision Program ##
+## org.frc4050.targetgearlift.Main - AKA: Biohazard's Vision Program ##
 
 Hopefully this readme will be updated more in the future...
 

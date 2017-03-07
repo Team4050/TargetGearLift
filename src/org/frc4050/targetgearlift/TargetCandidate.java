@@ -1,3 +1,5 @@
+package org.frc4050.targetgearlift;
+
 import org.opencv.core.Rect;
 
 public class TargetCandidate {

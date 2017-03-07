@@ -1,4 +1,4 @@
-package util;
+package org.frc4050.targetgearlift.util;
 
 public class GlobalVariables {
 
@@ -9,10 +9,6 @@ public class GlobalVariables {
 
     private static double VIDEO_WIDTH = 640.0;
     private static double VIDEO_HEIGHT = 360.0;
-
-    private static String CAPTURE_STATUS_STREAM = "STREAM";
-    private static String CAPTURE_STATUS_RESTART = "RESTART";
-    private static String CAPTURE_STATUS_STOP = "STOP";
 
     private static int MIN_ACCEPTED_SCORE;
 
@@ -28,6 +24,25 @@ public class GlobalVariables {
     private static boolean headless;
     private static boolean streaming;
     private static int streamingPort;
+
+    private static double resizeWidth;
+    private static double resizeHeight;
+
+    public static double getResizeHeight() {
+        return resizeHeight;
+    }
+
+    public static void setResizeHeight(double resizeHeight) {
+        GlobalVariables.resizeHeight = resizeHeight;
+    }
+
+    public static double getResizeWidth() {
+        return resizeWidth;
+    }
+
+    public static void setResizeWidth(double resizeWidth) {
+        GlobalVariables.resizeWidth = resizeWidth;
+    }
 
     public int getStreamingPort() {
         return streamingPort;
@@ -77,30 +92,6 @@ public class GlobalVariables {
         this.VIDEO_HEIGHT = VIDEO_HEIGHT;
     }
 
-    public String getCAPTURE_STATUS_STREAM() {
-        return CAPTURE_STATUS_STREAM;
-    }
-
-    public void setCAPTURE_STATUS_STREAM(String CAPTURE_STATUS_STREAM) {
-        this.CAPTURE_STATUS_STREAM = CAPTURE_STATUS_STREAM;
-    }
-
-    public String getCAPTURE_STATUS_RESTART() {
-        return CAPTURE_STATUS_RESTART;
-    }
-
-    public void setCAPTURE_STATUS_RESTART(String CAPTURE_STATUS_RESTART) {
-        this.CAPTURE_STATUS_RESTART = CAPTURE_STATUS_RESTART;
-    }
-
-    public String getCAPTURE_STATUS_STOP() {
-        return CAPTURE_STATUS_STOP;
-    }
-
-    public void setCAPTURE_STATUS_STOP(String CAPTURE_STATUS_STOP) {
-        this.CAPTURE_STATUS_STOP = CAPTURE_STATUS_STOP;
-    }
-
     public int getMIN_ACCEPTED_SCORE() {
         return MIN_ACCEPTED_SCORE;
     }
@@ -116,14 +107,6 @@ public class GlobalVariables {
     public void setHSVShown(boolean HSVShown) {
         this.HSVShown = HSVShown;
     }
-
-    //public double getExposure() {
-        //return exposure;
-    //}
-
-    //public void setExposure(double exposure) {
-        //this.exposure = exposure;
-    //}
 
     public double getMinHue() {
         return minHue;
