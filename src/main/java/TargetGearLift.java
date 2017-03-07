@@ -1,8 +1,3 @@
-import processing.GripPipeline;
-import processing.ImageProcessor;
-import util.GUI;
-import util.GlobalVariables;
-import util.RTSettings;
 import com.github.lalyos.jfiglet.FigletFont;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.opencv.core.Core;
@@ -12,6 +7,11 @@ import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
+import processing.GripPipeline;
+import processing.ImageProcessor;
+import util.GUI;
+import util.GlobalVariables;
+import util.RTSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +55,7 @@ public class TargetGearLift {
     private int MIN_ACCEPTED_SCORE;
 
     private boolean showHSV;
-    private double exposure;
+    //private double exposure;
     private double minHue;
     private double minSat;
     private double minVal;
@@ -65,6 +65,8 @@ public class TargetGearLift {
     private String streamStatus;
 
     private boolean headless;
+    private boolean streaming;
+    private int streamingPort;
 
 
     public static void main(String[] args) {
@@ -104,37 +106,34 @@ public class TargetGearLift {
         MIN_ACCEPTED_SCORE = gv.getMIN_ACCEPTED_SCORE();
 
         showHSV = gv.isHSVShown();
-        exposure = gv.getExposure();
+        //exposure = gv.getExposure();
         minHue = gv.getMinHue();
         minSat = gv.getMinSat();
         minVal = gv.getMinVal();
         maxHue = gv.getMaxHue();
         maxSat = gv.getMaxSat();
         maxVal = gv.getMaxVal();
-        streamStatus = gv.getStreamStatus();
 
         headless = gv.isHeadless();
+        streaming = gv.isStreaming();
+        streamingPort = gv.getStreamingPort();
 
         System.out.println("[INFO] Prepare to be slammed with some of the most hard hitting facts you'll see all day!");
         System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
         System.out.println("       Network Table Name = " + ntName);
         System.out.println("       Headless Mode Enabled = " + Boolean.toString(headless));
-        System.out.println("       Capture Device = " + Integer.toString(captureDevice));
-        System.out.println("       Video Width = " + Double.toString(VIDEO_WIDTH));
-        System.out.println("       Video Height = " + Double.toString(VIDEO_HEIGHT));
-        System.out.println("       Capture Status Stream = " + CAPTURE_STATUS_STREAM);
-        System.out.println("       Capture Status Restart = " + CAPTURE_STATUS_RESTART);
-        System.out.println("       Capture Status Stop = " + CAPTURE_STATUS_STOP);
-        System.out.println("       Minimum Accepted Score = " + Integer.toString(MIN_ACCEPTED_SCORE));
+        System.out.println("       Is Streaming? = " + Boolean.toString(streaming));
+        System.out.println("       If so, on what port? = " + Integer.toString(streamingPort));
         System.out.println("       HSV Overlay Enabled = " + Boolean.toString(showHSV));
-        System.out.println("       Exposure = " + Double.toString(exposure));
+        System.out.println("       Capture Device = " + Integer.toString(captureDevice));
+        System.out.println("       Minimum Accepted Score = " + Integer.toString(MIN_ACCEPTED_SCORE));
+        //System.out.println("       Exposure = " + Double.toString(exposure));
         System.out.println("       Minimum Hue = " + Double.toString(minHue));
         System.out.println("       Maximum Hue = " + Double.toString(maxHue));
         System.out.println("       Minimum Saturation = " + Double.toString(minSat));
         System.out.println("       Maximum Saturation = " + Double.toString(maxSat));
         System.out.println("       Minimum Value = " + Double.toString(minVal));
         System.out.println("       Maximum Value = " + Double.toString(maxVal));
-        System.out.println("       Stream Status = " + streamStatus);
         System.out.println("[INFO] Fact slamming over");
 
     }
@@ -149,7 +148,7 @@ public class TargetGearLift {
          * Prime the read values. These will come from RoboRIO later.
          ************************************************************/
         table.putBoolean("rioShowHSV", false);
-        table.putNumber("rioExposure", -5.0);
+        //table.putNumber("rioExposure", -10.0);
         table.putNumber("rioMinHue",  89.0287);
         table.putNumber("rioMinSat", 178.8669);
         table.putNumber("rioMinVal",  59.6223);
@@ -169,15 +168,19 @@ public class TargetGearLift {
 
         streamStatus = new String(table.getString("rioStatus", CAPTURE_STATUS_STREAM));
         
-        ServerSocket matSocketServer;
-        
-        try {
-            matSocketServer = new ServerSocket(5805);
-            
-            Socket matSocket = matSocketServer.accept(); //establishes connection   
+        ServerSocket matSocketServer = null;
+        DataOutputStream matOutputStream = null;
 
-            DataOutputStream matOutputStream = new DataOutputStream(matSocket.getOutputStream());  
-            
+        try {
+            if(streaming) {
+                matSocketServer = new ServerSocket(streamingPort);
+
+                Socket matSocket = matSocketServer.accept(); //establishes connection
+
+                matOutputStream = new DataOutputStream(matSocket.getOutputStream());
+            }
+
+
             while (!streamStatus.equals(CAPTURE_STATUS_STOP)) {
                 // To avoid infinite restarts
                 if (streamStatus.equals(CAPTURE_STATUS_RESTART)) {
@@ -197,8 +200,8 @@ public class TargetGearLift {
                  * -10.0 : Retro tape lighting
                  **********************************************/
 
-                exposure = table.getNumber("rioExposure", -10.0);
-                capture.set(Videoio.CAP_PROP_EXPOSURE, exposure);
+               // exposure = table.getNumber("rioExposure", -10.0);
+               // capture.set(Videoio.CAP_PROP_EXPOSURE, exposure);
         
                 int lowestAcceptedScore = 400;
         
@@ -308,8 +311,9 @@ public class TargetGearLift {
                             }
                     
                             augmentedImage.get(0, 0, matBuffer);
-
-                            streamImageToClient(matOutputStream, matBuffer, matSize, matHeight, matWidth, showHSV);
+                            if(streaming) {
+                                streamImageToClient(matOutputStream, matBuffer, matSize, matHeight, matWidth, showHSV);
+                            }
                         } else {
                             System.out.println(" -- Frame not captured -- Break!");
                             table.putString("rioStatus", CAPTURE_STATUS_STOP);

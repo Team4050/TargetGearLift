@@ -7,27 +7,43 @@ public class GlobalVariables {
 
     private static int CaptureDevice;
 
-    private static double VIDEO_WIDTH;
-    private static double VIDEO_HEIGHT;
+    private static double VIDEO_WIDTH = 640.0;
+    private static double VIDEO_HEIGHT = 360.0;
 
-    private static String CAPTURE_STATUS_STREAM;
-    private static String CAPTURE_STATUS_RESTART;
-    private static String CAPTURE_STATUS_STOP;
+    private static String CAPTURE_STATUS_STREAM = "STREAM";
+    private static String CAPTURE_STATUS_RESTART = "RESTART";
+    private static String CAPTURE_STATUS_STOP = "STOP";
 
     private static int MIN_ACCEPTED_SCORE;
 
     private static boolean HSVShown;
-    private static double exposure;
+    //private static double exposure;
     private static double minHue;
     private static double minSat;
     private static double minVal;
     private static double maxHue;
     private static double maxSat;
     private static double maxVal;
-    private static String streamStatus;
 
     private static boolean headless;
+    private static boolean streaming;
+    private static int streamingPort;
 
+    public int getStreamingPort() {
+        return streamingPort;
+    }
+
+    public void setStreamingPort(int streamingPort) {
+        GlobalVariables.streamingPort = streamingPort;
+    }
+
+    public boolean isStreaming() {
+        return streaming;
+    }
+
+    public void setStreaming(boolean runStreamServer) {
+        GlobalVariables.streaming = runStreamServer;
+    }
 
     public String getRoborioIPAddress() {
         return roborioIPAddress;
@@ -101,13 +117,13 @@ public class GlobalVariables {
         this.HSVShown = HSVShown;
     }
 
-    public double getExposure() {
-        return exposure;
-    }
+    //public double getExposure() {
+        //return exposure;
+    //}
 
-    public void setExposure(double exposure) {
-        this.exposure = exposure;
-    }
+    //public void setExposure(double exposure) {
+        //this.exposure = exposure;
+    //}
 
     public double getMinHue() {
         return minHue;
@@ -155,14 +171,6 @@ public class GlobalVariables {
 
     public void setMaxVal(double maxVal) {
         this.maxVal = maxVal;
-    }
-
-    public String getStreamStatus() {
-        return streamStatus;
-    }
-
-    public void setStreamStatus(String streamStatus) {
-        this.streamStatus = streamStatus;
     }
 
     public boolean isHeadless() {

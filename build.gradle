@@ -7,7 +7,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 // Windows: "windows", Raspberry PI: "arm-raspbian", Jetson or Beaglebone: "armhf"
-ext.buildType = "windows"
+ext.buildType = "armhf"
 
 mainClassName = 'TargetGearLift'
 def projectName = 'TargetGearLift'
@@ -24,8 +24,8 @@ repositories {
 dependencies {
   compile ntcoreDep()
   compile cscoreDep()
+  compile jfig()
   compile 'org.opencv:opencv-java:+'
-  compile 'com.github.lalyos:jfiglet:+'
 }
 
 jar {
@@ -117,6 +117,7 @@ applicationDefaultJvmArgs = ["-Djava.library.path=${openCvUnzipLocation}"]
 
 build.dependsOn copyToOutput
 build.dependsOn zipOutput
+
 run.dependsOn unzipOpenCv
 
 clean {

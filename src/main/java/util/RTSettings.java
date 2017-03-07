@@ -24,15 +24,12 @@ public class RTSettings {
             gv.setRoborioIPAddress(prop.getProperty("roborioIPAddress"));
             gv.setNtName(prop.getProperty("ntName"));
             gv.setHeadless(Boolean.parseBoolean(prop.getProperty("headless")));
+            gv.setStreaming(Boolean.parseBoolean(prop.getProperty("streaming")));
+            gv.setStreamingPort(Integer.parseInt(prop.getProperty("streamingPort")));
             gv.setCaptureDevice(Integer.parseInt(prop.getProperty("captureDevice")));
-            gv.setVIDEO_WIDTH(Double.parseDouble(prop.getProperty("VIDEO_WIDTH")));
-            gv.setVIDEO_HEIGHT(Double.parseDouble(prop.getProperty("VIDEO_HEIGHT")));
-            gv.setCAPTURE_STATUS_STREAM(prop.getProperty("CAPTURE_STATUS_STREAM"));
-            gv.setCAPTURE_STATUS_RESTART(prop.getProperty("CAPTURE_STATUS_RESTART"));
-            gv.setCAPTURE_STATUS_STOP(prop.getProperty("CAPTURE_STATUS_STOP"));
             gv.setMIN_ACCEPTED_SCORE(Integer.parseInt(prop.getProperty("MIN_ACCEPTED_SCORE")));
             gv.setHSVShown(Boolean.parseBoolean(prop.getProperty("HSVShown")));
-            gv.setExposure(Double.parseDouble(prop.getProperty("exposure")));
+            //gv.setExposure(Double.parseDouble(prop.getProperty("exposure")));
             gv.setMinHue(Double.parseDouble(prop.getProperty("minHue")));
             gv.setMaxHue(Double.parseDouble(prop.getProperty("maxHue")));
             gv.setMinSat(Double.parseDouble(prop.getProperty("minSat")));
