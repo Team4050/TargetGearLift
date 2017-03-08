@@ -1,7 +1,13 @@
 package org.frc4050.targetgearlift;
 
-import com.github.lalyos.jfiglet.FigletFont;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import java.awt.Image;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import org.frc4050.targetgearlift.processing.GripPipeline;
 import org.frc4050.targetgearlift.processing.ImageProcessor;
 import org.frc4050.targetgearlift.util.GUI;
@@ -15,11 +21,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
+import com.github.lalyos.jfiglet.FigletFont;
+
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Main {
     static {
@@ -136,16 +140,11 @@ public class Main {
         NetworkTable.setClientMode();
         NetworkTable table = NetworkTable.getTable(ntName);
 
-
         VideoCapture capture = new VideoCapture(captureDevice);
         capture.set(Videoio.CAP_PROP_FRAME_WIDTH, VIDEO_WIDTH);
         capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, VIDEO_HEIGHT);
         capture.set(Videoio.CAP_PROP_FPS, 30.0);
-
-        int lowestAcceptedScore = 400;
-
-        int matSize = (int) (VIDEO_WIDTH * VIDEO_HEIGHT * 3);
-        byte[] matBuffer = new byte[matSize];
+        capture.set(Videoio.CAP_PROP_EXPOSURE, -10.0);
 
         imagePipeline.setSize(resizeWidth, resizeHeight);
         imagePipeline.setHSV(minHue, minSat, minVal, maxHue, maxSat, maxVal);
@@ -170,14 +169,13 @@ public class Main {
 
         double frameCenterX = (VIDEO_WIDTH / 2.0);
 
-
-        double leftRectRightX;
-        double rightRectLeftX;
-        double targetCenterX;
-        double targetOffset;
-        double distance;
-        double heightRatioLvR;
-        double heightRatioRvL;
+        double leftRectRightX = 0.0;
+        double rightRectLeftX = 0.0;
+        double targetCenterX = 0.0;
+        double targetOffset = 0.0;
+        double distance = 0.0;
+        double heightRatioLvR = 0.0;
+        double heightRatioRvL = 0.0;
 
         try {
             if(!headless) {
@@ -186,14 +184,32 @@ public class Main {
                 hudFrame.add(hudImageLabel);
                 hudFrame.setLocation(~-320, ~0);
             }
+                     
+            boolean readingFromCamera = false;
 
-            while(true) {
-                if (capture.isOpened()) {
+            if (capture.isOpened()) {
+                readingFromCamera = true;
+                System.out.println("Camera is opened.");
+            } else {
+                System.out.println("ERROR: Camera failed to open.");
+            }
+
+            int frameNumber = 1;
+            long frameStart = 0;
+        
+            while(readingFromCamera) {
+                //if (capture.isOpened()) { /* Moved isOpened() logic outside of loop. */
 
                     capture.read(webcamMat);
 
                     if (!webcamMat.empty()) {
 
+                        /********************************************
+                         * Use for tracking time to display a frame.
+                         ********************************************/
+                        frameStart = System.nanoTime();
+                        /********************************************/
+                        
                         imagePipeline.process(webcamMat);
 
                         // Get contours to score
@@ -201,9 +217,13 @@ public class Main {
                         contourCount = contourArray.size();
                         rect = new Rect[contourCount];
                         rectCount = createBoundingRects(contourArray, rect, contourCount);
+
                         // Calculate the number of pair combinations
                         numOfPairs = ( (rectCount - 1) * rectCount) / 2;
                         rectCandidates = new TargetCandidate[numOfPairs];
+
+                        // Reset for current frame.
+                        scoreIndex = 0; 
 
                         // Score each pair combination
                         for (int i = 0; i < (rectCount - 1); i++) {
@@ -213,6 +233,12 @@ public class Main {
                             }
                         }
 
+                        // Reset for current frame.
+                        highestScore = MIN_ACCEPTED_SCORE; 
+                        bestPairIndex = -1;
+                        targetIndex1 = -1;
+                        targetIndex2 = -1;
+                
                         for (int i = 0; i < numOfPairs; i++) {
                             int tempScore = rectCandidates[i].getTotalScore();
 
@@ -224,17 +250,9 @@ public class Main {
                             }
                         }
 
-                        HUD hudMat;
-
                         if (bestPairIndex == -1) { // No target found
-                            hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT);
                             sendTargetingData(table, false, 0, 0, 0);
                         } else { // Found a target
-                            if (rectCandidates[bestPairIndex].getTotalScore() < lowestAcceptedScore) {
-                                lowestAcceptedScore = rectCandidates[bestPairIndex].getTotalScore();
-                                System.out.println("Score = " + lowestAcceptedScore);
-                            }
-
                             leftRectRightX = rect[targetIndex1].x + rect[targetIndex1].width;
                             rightRectLeftX = rect[targetIndex2].x;
 
@@ -245,35 +263,45 @@ public class Main {
                             heightRatioLvR = (double) (rect[targetIndex1].height) / (double) (rect[targetIndex2].height);
                             heightRatioRvL = (double) (rect[targetIndex2].height) / (double) (rect[targetIndex1].height);
 
-                            hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT, rect[targetIndex1], rect[targetIndex2],
-                                             targetCenterX, Math.abs(targetOffset), heightRatioLvR, heightRatioRvL, distance);
-
                             sendTargetingData(table, true, (targetOffset / targetCenterX), (1.0 - heightRatioRvL) * 2.0, distance);
                         }
 
-                        Mat augmentedImage;
-
-                        if (showHSV) {
-                            augmentedImage = imagePipeline.hsvThresholdOutput();
-                        } else {
-                            augmentedImage = webcamMat.clone();
-                            Core.bitwise_or(augmentedImage, hudMat, augmentedImage);
-                        }
-
                         if (!headless) {
+                            HUD hudMat;
+                            Mat augmentedImage;
+                            
+                            if (bestPairIndex == -1) { // No target found
+                                hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT);
+                            } else { // Found a target
+                                hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT, rect[targetIndex1], rect[targetIndex2],
+                                                 targetCenterX, Math.abs(targetOffset), heightRatioLvR, heightRatioRvL, distance);
+                            }
+
+                            if (showHSV) {
+                                augmentedImage = imagePipeline.hsvThresholdOutput();
+                            } else {
+                                augmentedImage = webcamMat.clone();
+                                Core.bitwise_or(augmentedImage, hudMat, augmentedImage);
+                            }
+
                             Image hudImage = imp.toBufferedImage(augmentedImage);
                             ImageIcon hudImageIcon = new ImageIcon(hudImage, "Augmented Image");
                             hudImageLabel.setIcon(hudImageIcon);
 
                             hudFrame.pack(); // Resize the windows to fit the image
                         }
+                        
+                        /********************************************
+                         * Use for tracking time to display a frame.
+                         ********************************************/
+                        System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6));
+                        /********************************************/
 
-                        augmentedImage.get(0, 0, matBuffer);
                     } else {
                         System.out.println(" -- Frame not captured -- Break!");
                         break;
                     }
-                }
+                //} /* Moved isOpened() logic outside of loop. */
             }
         } catch (Exception e) {
             System.out.println(e);
