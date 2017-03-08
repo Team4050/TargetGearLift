@@ -136,33 +136,56 @@ public class Main {
         NetworkTable.setClientMode();
         NetworkTable table = NetworkTable.getTable(ntName);
 
+
+        VideoCapture capture = new VideoCapture(captureDevice);
+        capture.set(Videoio.CAP_PROP_FRAME_WIDTH, VIDEO_WIDTH);
+        capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, VIDEO_HEIGHT);
+        capture.set(Videoio.CAP_PROP_FPS, 30.0);
+
+        int lowestAcceptedScore = 400;
+
+        int matSize = (int) (VIDEO_WIDTH * VIDEO_HEIGHT * 3);
+        byte[] matBuffer = new byte[matSize];
+
+        imagePipeline.setSize(resizeWidth, resizeHeight);
+        imagePipeline.setHSV(minHue, minSat, minVal, maxHue, maxSat, maxVal);
+
+        int highestScore = MIN_ACCEPTED_SCORE;
+        int bestPairIndex = -1;
+        int targetIndex1 = -1;
+        int targetIndex2 = -1;
+
+        ArrayList<MatOfPoint> contourArray;
+
+        int contourCount;
+
+        Rect[] rect;
+
+        int rectCount;
+        int numOfPairs;
+
+        TargetCandidate[] rectCandidates;
+
+        int scoreIndex = 0;
+
+        double frameCenterX = (VIDEO_WIDTH / 2.0);
+
+
+        double leftRectRightX;
+        double rightRectLeftX;
+        double targetCenterX;
+        double targetOffset;
+        double distance;
+        double heightRatioLvR;
+        double heightRatioRvL;
+
         try {
-
-            VideoCapture capture = new VideoCapture(captureDevice);
-            capture.set(Videoio.CAP_PROP_FRAME_WIDTH, VIDEO_WIDTH);
-            capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, VIDEO_HEIGHT);
-            capture.set(Videoio.CAP_PROP_FPS, 30.0);
-
-            int lowestAcceptedScore = 400;
-
-            int matSize = (int) (VIDEO_WIDTH * VIDEO_HEIGHT * 3);
-            byte[] matBuffer = new byte[matSize];
-
-            imagePipeline.setSize(resizeWidth, resizeHeight);
-            imagePipeline.setHSV(minHue, minSat, minVal, maxHue, maxSat, maxVal);
-
             if(!headless) {
                 hudImageLabel = new JLabel();
-                hudFrame = new GUI("org.frc4050.targetgearlift.HUD Frame", 400, 400, true, false);
+                hudFrame = new GUI("HUD Frame", 400, 400, true, false);
                 hudFrame.add(hudImageLabel);
                 hudFrame.setLocation(~-320, ~0);
             }
-
-            int highestScore = MIN_ACCEPTED_SCORE;
-            int bestPairIndex = -1;
-            int targetIndex1 = -1;
-            int targetIndex2 = -1;
-
 
             while(true) {
                 if (capture.isOpened()) {
@@ -174,20 +197,13 @@ public class Main {
                         imagePipeline.process(webcamMat);
 
                         // Get contours to score
-                        ArrayList<MatOfPoint> contourArray = imagePipeline.findContoursOutput();
-
-                        int contourCount = contourArray.size();
-
-                        Rect[] rect = new Rect[contourCount];
-
-                        int rectCount = createBoundingRects(contourArray, rect, contourCount);
-
+                        contourArray = imagePipeline.findContoursOutput();
+                        contourCount = contourArray.size();
+                        rect = new Rect[contourCount];
+                        rectCount = createBoundingRects(contourArray, rect, contourCount);
                         // Calculate the number of pair combinations
-                        int numOfPairs = ( (rectCount - 1) * rectCount) / 2;
-
-                        TargetCandidate[] rectCandidates = new TargetCandidate[numOfPairs];
-
-                        int scoreIndex = 0;
+                        numOfPairs = ( (rectCount - 1) * rectCount) / 2;
+                        rectCandidates = new TargetCandidate[numOfPairs];
 
                         // Score each pair combination
                         for (int i = 0; i < (rectCount - 1); i++) {
@@ -219,16 +235,15 @@ public class Main {
                                 System.out.println("Score = " + lowestAcceptedScore);
                             }
 
-                            double frameCenterX = (VIDEO_WIDTH / 2.0);
-                            double leftRectRightX = rect[targetIndex1].x + rect[targetIndex1].width;
-                            double rightRectLeftX = rect[targetIndex2].x;
+                            leftRectRightX = rect[targetIndex1].x + rect[targetIndex1].width;
+                            rightRectLeftX = rect[targetIndex2].x;
 
-                            // These are the values to show in the org.frc4050.targetgearlift.HUD and to send to NetworkTable
-                            double targetCenterX = ( (rightRectLeftX - leftRectRightX) / 2.0) + leftRectRightX;
-                            double targetOffset = frameCenterX - targetCenterX;
-                            double distance = estimatedDistance(rect[targetIndex1].height, rect[targetIndex2].height);
-                            double heightRatioLvR = (double) (rect[targetIndex1].height) / (double) (rect[targetIndex2].height);
-                            double heightRatioRvL = (double) (rect[targetIndex2].height) / (double) (rect[targetIndex1].height);
+                            // These are the values to show in the HUD and to send to NetworkTable
+                            targetCenterX = ( (rightRectLeftX - leftRectRightX) / 2.0) + leftRectRightX;
+                            targetOffset = frameCenterX - targetCenterX;
+                            distance = estimatedDistance(rect[targetIndex1].height, rect[targetIndex2].height);
+                            heightRatioLvR = (double) (rect[targetIndex1].height) / (double) (rect[targetIndex2].height);
+                            heightRatioRvL = (double) (rect[targetIndex2].height) / (double) (rect[targetIndex1].height);
 
                             hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT, rect[targetIndex1], rect[targetIndex2],
                                              targetCenterX, Math.abs(targetOffset), heightRatioLvR, heightRatioRvL, distance);

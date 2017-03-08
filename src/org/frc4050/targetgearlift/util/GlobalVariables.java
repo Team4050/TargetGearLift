@@ -13,7 +13,6 @@ public class GlobalVariables {
     private static int MIN_ACCEPTED_SCORE;
 
     private static boolean HSVShown;
-    //private static double exposure;
     private static double minHue;
     private static double minSat;
     private static double minVal;
