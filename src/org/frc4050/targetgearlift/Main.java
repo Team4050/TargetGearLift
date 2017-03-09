@@ -196,6 +196,8 @@ public class Main {
 
             int frameNumber = 1;
             long frameStart = 0;
+            long currTimeStamp = 0;
+            long prevTimeStamp = 0;
         
             while(readingFromCamera) {
                 //if (capture.isOpened()) { /* Moved isOpened() logic outside of loop. */
@@ -212,15 +214,27 @@ public class Main {
                         
                         imagePipeline.process(webcamMat);
 
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("01: " + ((currTimeStamp - frameStart) / 1e6));
+                        prevTimeStamp = currTimeStamp;
+
                         // Get contours to score
                         contourArray = imagePipeline.findContoursOutput();
                         contourCount = contourArray.size();
                         rect = new Rect[contourCount];
                         rectCount = createBoundingRects(contourArray, rect, contourCount);
 
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("02: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
+
                         // Calculate the number of pair combinations
                         numOfPairs = ( (rectCount - 1) * rectCount) / 2;
                         rectCandidates = new TargetCandidate[numOfPairs];
+
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("03: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
 
                         // Reset for current frame.
                         scoreIndex = 0; 
@@ -232,6 +246,10 @@ public class Main {
                                 scoreIndex++;
                             }
                         }
+
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("04: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
 
                         // Reset for current frame.
                         highestScore = MIN_ACCEPTED_SCORE; 
@@ -250,6 +268,10 @@ public class Main {
                             }
                         }
 
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("05: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
+
                         if (bestPairIndex == -1) { // No target found
                             sendTargetingData(table, false, 0, 0, 0);
                         } else { // Found a target
@@ -265,6 +287,10 @@ public class Main {
 
                             sendTargetingData(table, true, (targetOffset / targetCenterX), (1.0 - heightRatioRvL) * 2.0, distance);
                         }
+
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("06: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
 
                         if (!headless) {
                             HUD hudMat;
@@ -291,6 +317,10 @@ public class Main {
                             hudFrame.pack(); // Resize the windows to fit the image
                         }
                         
+                        currTimeStamp = System.nanoTime();
+                        System.out.println("07: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        prevTimeStamp = currTimeStamp;
+
                         /********************************************
                          * Use for tracking time to display a frame.
                          ********************************************/
