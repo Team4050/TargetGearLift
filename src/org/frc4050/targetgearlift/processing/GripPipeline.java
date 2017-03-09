@@ -1,10 +1,15 @@
 package org.frc4050.targetgearlift.processing;
 
-import org.opencv.core.*;
-import org.opencv.imgproc.Imgproc;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 /**
 * GripPipeline class.
@@ -68,16 +73,8 @@ public class GripPipeline {
 		int resizeInterpolation = Imgproc.INTER_CUBIC;
 		resizeImage(source0, resizeWidth, resizeHeight, resizeInterpolation, resizeOutput);
 
-		// Step CV_GaussianBlur0:
-		Mat cvGaussianblurSrc = resizeOutput;
-		Size cvGaussianblurKsize = newSizeOutput;
-		double cvGaussianblurSigmax = 1.0;
-		double cvGaussianblurSigmay = 7.0;
-		int cvGaussianblurBordertype = Core.BORDER_DEFAULT;
-		cvGaussianblur(cvGaussianblurSrc, cvGaussianblurKsize, cvGaussianblurSigmax, cvGaussianblurSigmay, cvGaussianblurBordertype, cvGaussianblurOutput);
-
 		// Step CV_erode0:
-		Mat cvErodeSrc = cvGaussianblurOutput;
+        Mat cvErodeSrc = resizeOutput;
 		Mat cvErodeKernel = new Mat();
 		Point cvErodeAnchor = new Point(-1, -1);
 		double cvErodeIterations = 3.0;
@@ -98,7 +95,6 @@ public class GripPipeline {
 		Mat findContoursInput = hsvThresholdOutput;
 		boolean findContoursExternalOnly = true;
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
-
 	}
 
     /************************************************

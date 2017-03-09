@@ -198,6 +198,7 @@ public class Main {
             long frameStart = 0;
             long currTimeStamp = 0;
             long prevTimeStamp = 0;
+            long begininng = System.nanoTime();
         
             while(readingFromCamera) {
                 //if (capture.isOpened()) { /* Moved isOpened() logic outside of loop. */
@@ -205,12 +206,7 @@ public class Main {
                     capture.read(webcamMat);
 
                     if (!webcamMat.empty()) {
-
-                        /********************************************
-                         * Use for tracking time to display a frame.
-                         ********************************************/
                         frameStart = System.nanoTime();
-                        /********************************************/
                         
                         imagePipeline.process(webcamMat);
 
@@ -316,17 +312,13 @@ public class Main {
 
                             hudFrame.pack(); // Resize the windows to fit the image
                         }
-                        
+
                         currTimeStamp = System.nanoTime();
                         System.out.println("07: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
-                        /********************************************
-                         * Use for tracking time to display a frame.
-                         ********************************************/
-                        System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6));
-                        /********************************************/
-
+                        System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6) +
+                                           " - Total: " + ((System.nanoTime() - begininng) / 1e6));
                     } else {
                         System.out.println(" -- Frame not captured -- Break!");
                         break;
