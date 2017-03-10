@@ -4,6 +4,7 @@ ntName=Vision
 headless=false
 HSVShown=false
 captureDevice=1
+exposure=-10.0
 ResizeWidth=350.0
 ResizeHeight=240.0
 MIN_ACCEPTED_SCORE=250
