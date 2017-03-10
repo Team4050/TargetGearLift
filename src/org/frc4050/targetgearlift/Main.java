@@ -2,7 +2,6 @@ package org.frc4050.targetgearlift;
 
 import java.awt.Image;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -173,9 +172,22 @@ public class Main {
         double rightRectLeftX = 0.0;
         double targetCenterX = 0.0;
         double targetOffset = 0.0;
-        double distance = 0.0;
         double heightRatioLvR = 0.0;
         double heightRatioRvL = 0.0;
+
+        Boolean haveTarget = false;
+        String pivot = "";
+        String lateral = "";
+        String distance = "";
+
+        Boolean haveTargetPrev = true;
+        String pivotPrev = "";
+        String lateralPrev = "";
+        String distancePrev = "";
+        
+        int leftRectW = 0;
+        int leftRectH = 0;
+        int rightRectH = 0;
 
         try {
             if(!headless) {
@@ -269,19 +281,44 @@ public class Main {
                         prevTimeStamp = currTimeStamp;
 
                         if (bestPairIndex == -1) { // No target found
-                            sendTargetingData(table, false, 0, 0, 0);
+                            if (haveTargetPrev) {
+                                sendTargetingData(table, false, "0.00", "0.00", "0.00");
+                                //System.out.println("[DEBUG] Wrote to NetworkTable");
+
+                                haveTargetPrev = false;
+                                pivotPrev = "0.00";
+                                lateralPrev = "0.00";
+                                distancePrev = "0.00";
+                            }
                         } else { // Found a target
-                            leftRectRightX = rect[targetIndex1].x + rect[targetIndex1].width;
+                            leftRectW = rect[targetIndex1].width;
+                            leftRectH = rect[targetIndex1].height;
+                            rightRectH = rect[targetIndex2].height;
+                                    
+                            leftRectRightX = rect[targetIndex1].x + leftRectW;
                             rightRectLeftX = rect[targetIndex2].x;
 
                             // These are the values to show in the HUD and to send to NetworkTable
                             targetCenterX = ( (rightRectLeftX - leftRectRightX) / 2.0) + leftRectRightX;
                             targetOffset = frameCenterX - targetCenterX;
-                            distance = estimatedDistance(rect[targetIndex1].height, rect[targetIndex2].height);
-                            heightRatioLvR = (double) (rect[targetIndex1].height) / (double) (rect[targetIndex2].height);
-                            heightRatioRvL = (double) (rect[targetIndex2].height) / (double) (rect[targetIndex1].height);
+                            heightRatioLvR = (double) leftRectH / (double) rightRectH;
+                            heightRatioRvL = (double) rightRectH / (double) leftRectH;
 
-                            sendTargetingData(table, true, (targetOffset / targetCenterX), (1.0 - heightRatioRvL) * 2.0, distance);
+                            haveTarget = true;
+                            distance = estimatedDistance(leftRectH, rightRectH);
+                            pivot = String.format("%1$,.2f", (targetOffset / targetCenterX));
+                            lateral = String.format("%1$,.2f", (1.0 - heightRatioRvL) * 2.0);
+
+                            if ( (haveTarget != haveTargetPrev) || (distance != distancePrev) ||
+                                 (pivot != pivotPrev) || (lateral != lateralPrev) ) {
+                                sendTargetingData(table, haveTarget, pivot, lateral, distance);
+                                //System.out.println("[DEBUG] Wrote to NetworkTable");
+                            }
+                               
+                            haveTargetPrev = haveTarget;
+                            distancePrev = distance;
+                            pivotPrev = pivot;
+                            lateralPrev = lateral;
                         }
 
                         currTimeStamp = System.nanoTime();
@@ -296,7 +333,7 @@ public class Main {
                                 hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT);
                             } else { // Found a target
                                 hudMat = new HUD(VIDEO_WIDTH, VIDEO_HEIGHT, rect[targetIndex1], rect[targetIndex2],
-                                                 targetCenterX, Math.abs(targetOffset), heightRatioLvR, heightRatioRvL, distance);
+                                                 targetCenterX, Math.abs(targetOffset), heightRatioLvR, heightRatioRvL, Double.parseDouble(distance));
                             }
 
                             if (showHSV) {
@@ -319,6 +356,7 @@ public class Main {
 
                         System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6) +
                                            " - Total: " + ((System.nanoTime() - begininng) / 1e6));
+
                     } else {
                         System.out.println(" -- Frame not captured -- Break!");
                         break;
@@ -330,7 +368,7 @@ public class Main {
         }
     }
     
-    private double estimatedDistance(int heightL, int heightR){
+    private String estimatedDistance(int heightL, int heightR){
         int averageHeight = (heightL + heightR) / 2;
         double distance = 0.0;
 
@@ -342,15 +380,15 @@ public class Main {
                        (0.239151*averageHeight) + 12.2385;
         }
 
-        return distance;
+        return String.format("%1$,.2f", distance);
     }
 
-    private void sendTargetingData(NetworkTable table, Boolean haveTarget, double pivot, 
-                                   double lateral, double distance) {
+    private void sendTargetingData(NetworkTable table, Boolean haveTarget, String pivot, 
+                                   String lateral, String distance) {
         table.putBoolean("rpiHaveTarget", haveTarget);
-        table.putString("rpiDistance", (new DecimalFormat("#0.00")).format(distance));
-        table.putString("rpiPivot", (new DecimalFormat("#0.00")).format(pivot));
-        table.putString("rpiLateral", (new DecimalFormat("#0.00")).format(lateral));
+        table.putString("rpiDistance", distance);
+        table.putString("rpiPivot", pivot);
+        table.putString("rpiLateral", lateral);
     }
     
     private int createBoundingRects(ArrayList<MatOfPoint> contourArray, Rect[] rect, int contourCount) {
