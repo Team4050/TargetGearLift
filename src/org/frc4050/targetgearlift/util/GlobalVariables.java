@@ -21,23 +21,15 @@ public class GlobalVariables {
     private static double maxVal;
 
     private static boolean headless;
-    private static boolean streaming;
-    private static int streamingPort;
 
-    public int getStreamingPort() {
-        return streamingPort;
+    private static double exposure;
+
+    public static double getExposure() {
+        return exposure;
     }
 
-    public void setStreamingPort(int streamingPort) {
-        GlobalVariables.streamingPort = streamingPort;
-    }
-
-    public boolean isStreaming() {
-        return streaming;
-    }
-
-    public void setStreaming(boolean runStreamServer) {
-        GlobalVariables.streaming = runStreamServer;
+    public static void setExposure(double exposure) {
+        GlobalVariables.exposure = exposure;
     }
 
     public String getRoborioIPAddress() {
