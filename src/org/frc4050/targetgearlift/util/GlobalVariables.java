@@ -7,8 +7,8 @@ public class GlobalVariables {
 
     private static int CaptureDevice;
 
-    private static double VIDEO_WIDTH = 640.0;
-    private static double VIDEO_HEIGHT = 360.0;
+    private static double VIDEO_WIDTH;
+    private static double VIDEO_HEIGHT;
 
     private static int MIN_ACCEPTED_SCORE;
 
@@ -23,25 +23,6 @@ public class GlobalVariables {
     private static boolean headless;
     private static boolean streaming;
     private static int streamingPort;
-
-    private static double resizeWidth;
-    private static double resizeHeight;
-
-    public static double getResizeHeight() {
-        return resizeHeight;
-    }
-
-    public static void setResizeHeight(double resizeHeight) {
-        GlobalVariables.resizeHeight = resizeHeight;
-    }
-
-    public static double getResizeWidth() {
-        return resizeWidth;
-    }
-
-    public static void setResizeWidth(double resizeWidth) {
-        GlobalVariables.resizeWidth = resizeWidth;
-    }
 
     public int getStreamingPort() {
         return streamingPort;

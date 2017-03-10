@@ -25,8 +25,8 @@ public class RTSettings {
             gv.setNtName(prop.getProperty("ntName"));
             gv.setHeadless(Boolean.parseBoolean(prop.getProperty("headless")));
             gv.setCaptureDevice(Integer.parseInt(prop.getProperty("captureDevice")));
-            gv.setResizeWidth(Double.parseDouble(prop.getProperty("ResizeWidth")));
-            gv.setResizeHeight(Double.parseDouble(prop.getProperty("ResizeHeight")));
+            gv.setVIDEO_WIDTH(Double.parseDouble(prop.getProperty("ResizeWidth")));
+            gv.setVIDEO_HEIGHT(Double.parseDouble(prop.getProperty("ResizeHeight")));
             gv.setMIN_ACCEPTED_SCORE(Integer.parseInt(prop.getProperty("MIN_ACCEPTED_SCORE")));
             gv.setHSVShown(Boolean.parseBoolean(prop.getProperty("HSVShown")));
             gv.setMinHue(Double.parseDouble(prop.getProperty("minHue")));
