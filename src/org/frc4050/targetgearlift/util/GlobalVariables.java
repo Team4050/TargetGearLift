@@ -22,14 +22,32 @@ public class GlobalVariables {
 
     private static boolean headless;
 
-    private static double exposure;
+    private static int exposure;
+    private static int brightness;
+    private static int contrast;
 
-    public static double getExposure() {
+    public static int getExposure() {
         return exposure;
     }
 
-    public static void setExposure(double exposure) {
+    public static void setExposure(int exposure) {
         GlobalVariables.exposure = exposure;
+    }
+
+    public static int getBrightness() {
+        return brightness;
+    }
+
+    public static void setBrightness(int brightness) {
+        GlobalVariables.brightness = brightness;
+    }
+
+    public static int getContrast() {
+        return contrast;
+    }
+
+    public static void setContrast(int contrast) {
+        GlobalVariables.contrast = contrast;
     }
 
     public String getRoborioIPAddress() {

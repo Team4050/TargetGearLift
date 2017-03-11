@@ -56,7 +56,9 @@ public class Main {
 
     private boolean headless;
 
-    private double exposure;
+    private int exposure;
+    private int brightness;
+    private int contrast;
 
     private static String systemType;
 
@@ -108,6 +110,8 @@ public class Main {
         headless = gv.isHeadless();
 
         exposure = gv.getExposure();
+        brightness = gv.getBrightness();
+        contrast = gv.getContrast();
 
         System.out.println("[INFO] Prepare to be slammed with some of the most hard hitting facts you'll see all day!");
         System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
@@ -115,7 +119,9 @@ public class Main {
         System.out.println("       Headless Mode Enabled = " + Boolean.toString(headless));
         System.out.println("       HSV Overlay Enabled = " + Boolean.toString(showHSV));
         System.out.println("       Capture Device = " + Integer.toString(captureDevice));
-        System.out.println("       Exposure = " + Double.toString(exposure));
+        System.out.println("       Exposure = " + Integer.toString(exposure));
+        System.out.println("       Brightness = " + Integer.toString(brightness));
+        System.out.println("       Contrast = " + Integer.toString(contrast));
         System.out.println("       Resized Width = " + Double.toString(VIDEO_WIDTH));
         System.out.println("       Resized Height = " + Double.toString(VIDEO_HEIGHT));
         System.out.println("       Minimum Accepted Score = " + Integer.toString(MIN_ACCEPTED_SCORE));
@@ -142,7 +148,7 @@ public class Main {
 
         if(systemType.matches("linux|Linux|L|l")) {
             try {
-                Runtime.getRuntime().exec("v4l2-ctl -d /dev/video" + captureDevice + " -c exposure_auto=1 -c exposure_absolute=" + exposure);
+                Runtime.getRuntime().exec("v4l2-ctl -d /dev/video" + captureDevice + " -c exposure_auto=1 -c exposure_absolute=" + exposure + " -c brightness=" + brightness + " -c contrast=" + contrast);
             } catch (IOException e) {
                 e.printStackTrace();
             }
