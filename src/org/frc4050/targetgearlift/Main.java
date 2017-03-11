@@ -1,7 +1,12 @@
 package org.frc4050.targetgearlift;
 
-import com.github.lalyos.jfiglet.FigletFont;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import java.awt.Image;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import org.frc4050.targetgearlift.processing.GripPipeline;
 import org.frc4050.targetgearlift.processing.ImageProcessor;
 import org.frc4050.targetgearlift.util.GUI;
@@ -15,10 +20,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.github.lalyos.jfiglet.FigletFont;
+
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Main {
     static {
@@ -408,13 +412,16 @@ public class Main {
         for (int i = 0; i < contourCount; i++) {
             MatOfPoint points = new MatOfPoint(contourArray.get(i));
             Rect tempRect = Imgproc.boundingRect(points);
-   
+            /*
             // Only include rectangles that are at least partially
             // in the bottom half of the frame
             if (tempRect.br().y > (VIDEO_HEIGHT / 2.0)) {
                 rect[rectCount] = tempRect;
                 rectCount += 1;
             }
+            */
+            rect[rectCount] = tempRect;
+            rectCount += 1;
         }
 
         return rectCount;
