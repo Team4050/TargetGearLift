@@ -7,8 +7,8 @@ public class GlobalVariables {
 
     private static int CaptureDevice;
 
-    private static double VIDEO_WIDTH = 640.0;
-    private static double VIDEO_HEIGHT = 360.0;
+    private static double VIDEO_WIDTH;
+    private static double VIDEO_HEIGHT;
 
     private static int MIN_ACCEPTED_SCORE;
 
@@ -21,42 +21,15 @@ public class GlobalVariables {
     private static double maxVal;
 
     private static boolean headless;
-    private static boolean streaming;
-    private static int streamingPort;
 
-    private static double resizeWidth;
-    private static double resizeHeight;
+    private static double exposure;
 
-    public static double getResizeHeight() {
-        return resizeHeight;
+    public static double getExposure() {
+        return exposure;
     }
 
-    public static void setResizeHeight(double resizeHeight) {
-        GlobalVariables.resizeHeight = resizeHeight;
-    }
-
-    public static double getResizeWidth() {
-        return resizeWidth;
-    }
-
-    public static void setResizeWidth(double resizeWidth) {
-        GlobalVariables.resizeWidth = resizeWidth;
-    }
-
-    public int getStreamingPort() {
-        return streamingPort;
-    }
-
-    public void setStreamingPort(int streamingPort) {
-        GlobalVariables.streamingPort = streamingPort;
-    }
-
-    public boolean isStreaming() {
-        return streaming;
-    }
-
-    public void setStreaming(boolean runStreamServer) {
-        GlobalVariables.streaming = runStreamServer;
+    public static void setExposure(double exposure) {
+        GlobalVariables.exposure = exposure;
     }
 
     public String getRoborioIPAddress() {

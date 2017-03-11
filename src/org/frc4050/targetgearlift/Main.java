@@ -1,12 +1,7 @@
 package org.frc4050.targetgearlift;
 
-import java.awt.Image;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
+import com.github.lalyos.jfiglet.FigletFont;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.frc4050.targetgearlift.processing.GripPipeline;
 import org.frc4050.targetgearlift.processing.ImageProcessor;
 import org.frc4050.targetgearlift.util.GUI;
@@ -20,9 +15,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import com.github.lalyos.jfiglet.FigletFont;
-
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     static {
@@ -59,11 +55,10 @@ public class Main {
     private double maxVal;
 
     private boolean headless;
-    private boolean streaming;
-    private int streamingPort;
 
-    private double resizeWidth;
-    private double resizeHeight;
+    private double exposure;
+
+    private static String systemType;
 
     public static void main(String[] args) {
         String asciiArt1 = null;
@@ -78,12 +73,17 @@ public class Main {
         System.out.println(asciiArt2);
         if(args.length > 0) {
             if(args[0].equals("-config")) {
-                System.out.println("[DEBUG] Initiating Read from Config");
                 s.applyFileData(args[1]);
             }
+
+            if(args[2].equals("-os")) {
+                systemType = args[3];
+            }
         }
+
         a.initVar();
         a.runMainLoop();
+
     }
 
     private void initVar() {
@@ -106,22 +106,18 @@ public class Main {
         maxVal = gv.getMaxVal();
 
         headless = gv.isHeadless();
-        streaming = gv.isStreaming();
-        streamingPort = gv.getStreamingPort();
 
-        resizeWidth = gv.getResizeWidth();
-        resizeHeight = gv.getResizeHeight();
+        exposure = gv.getExposure();
 
         System.out.println("[INFO] Prepare to be slammed with some of the most hard hitting facts you'll see all day!");
         System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
         System.out.println("       Network Table Name = " + ntName);
         System.out.println("       Headless Mode Enabled = " + Boolean.toString(headless));
-        System.out.println("       Is Streaming? = " + Boolean.toString(streaming));
-        System.out.println("       If so, on what port? = " + Integer.toString(streamingPort));
         System.out.println("       HSV Overlay Enabled = " + Boolean.toString(showHSV));
         System.out.println("       Capture Device = " + Integer.toString(captureDevice));
-        System.out.println("       Resized Width = " + Double.toString(resizeWidth));
-        System.out.println("       Resized Height = " + Double.toString(resizeHeight));
+        System.out.println("       Exposure = " + Double.toString(exposure));
+        System.out.println("       Resized Width = " + Double.toString(VIDEO_WIDTH));
+        System.out.println("       Resized Height = " + Double.toString(VIDEO_HEIGHT));
         System.out.println("       Minimum Accepted Score = " + Integer.toString(MIN_ACCEPTED_SCORE));
         System.out.println("       Minimum Hue = " + Double.toString(minHue));
         System.out.println("       Maximum Hue = " + Double.toString(maxHue));
@@ -143,9 +139,17 @@ public class Main {
         capture.set(Videoio.CAP_PROP_FRAME_WIDTH, VIDEO_WIDTH);
         capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, VIDEO_HEIGHT);
         capture.set(Videoio.CAP_PROP_FPS, 30.0);
-        capture.set(Videoio.CAP_PROP_EXPOSURE, -10.0);
 
-        imagePipeline.setSize(resizeWidth, resizeHeight);
+        if(systemType.matches("linux|Linux|L|l")) {
+            try {
+                Runtime.getRuntime().exec("v4l2-ctl -d /dev/video" + captureDevice + " -c exposure_auto=1 -c exposure_absolute=" + exposure);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            capture.set(Videoio.CAP_PROP_EXPOSURE, exposure);
+        }
+
         imagePipeline.setHSV(minHue, minSat, minVal, maxHue, maxSat, maxVal);
 
         int highestScore = MIN_ACCEPTED_SCORE;

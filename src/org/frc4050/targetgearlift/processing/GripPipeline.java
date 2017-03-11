@@ -36,19 +36,14 @@ import org.opencv.imgproc.Imgproc;
 public class GripPipeline {
 
 	//Outputs
-	private Size newSizeOutput = new Size();
-	private Mat resizeOutput = new Mat();
 	private Mat cvGaussianblurOutput = new Mat();
 	private Mat cvErodeOutput = new Mat();
 	private Mat hsvThresholdOutput = new Mat();
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 
 	/************************************************
-	 * Team 4050 : Added to adjust values dynamically
-	 ************************************************/
-	private double resizeWidth;
-	private double resizeHeight;
-
+	* Team 4050 : Added to adjust values dynamically
+	* ************************************************/
 	private double hsvMinHue;
 	private double hsvMinSat;
 	private double hsvMinVal;
@@ -65,16 +60,8 @@ public class GripPipeline {
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	public void process(Mat source0) {
-		// Step New_Size0:
-		double newSizeWidth = -1.0;
-		double newSizeHeight = -1.0;
-		newSize(newSizeWidth, newSizeHeight, newSizeOutput);
-
-		int resizeInterpolation = Imgproc.INTER_CUBIC;
-		resizeImage(source0, resizeWidth, resizeHeight, resizeInterpolation, resizeOutput);
-
 		// Step CV_erode0:
-        Mat cvErodeSrc = resizeOutput;
+        Mat cvErodeSrc = source0;
 		Mat cvErodeKernel = new Mat();
 		Point cvErodeAnchor = new Point(-1, -1);
 		double cvErodeIterations = 3.0;
@@ -100,11 +87,6 @@ public class GripPipeline {
     /************************************************
      * Team 4050 : Added to adjust values dynamically
      ************************************************/
-    public void setSize(double width, double height){
-        resizeWidth = width;
-        resizeHeight = height;
-    }
-
     public void setHSV(double minHue, double minSat, double minVal, double maxHue, double maxSat, double maxVal) {
         hsvMinHue = minHue;
         hsvMinSat = minSat;
@@ -113,14 +95,6 @@ public class GripPipeline {
         hsvMaxSat = maxSat;
         hsvMaxVal = maxVal;
     }
-
-	/**
-	 * This method is a generated getter for the output of a New_Size.
-	 * @return Size output from New_Size.
-	 */
-	public Size newSizeOutput() {
-		return newSizeOutput;
-	}
 
 	/**
 	 * Scales and image to an exact size.
@@ -165,34 +139,6 @@ public class GripPipeline {
 	 */
 	public ArrayList<MatOfPoint> findContoursOutput() {
 		return findContoursOutput;
-	}
-	
-	/**
-	 * Fills a size with given width and height.
-	 * @param width the width of the size
-	 * @param height the height of the size
-	 * @param size the size to fill
-	 */
-	private void newSize(double width, double height, Size size) {
-		size.height = height;
-		size.width = width;
-	}
-
-	/**
-	 * Performs a Gaussian blur on the image.
-	 * @param src the image to blur.
-	 * @param kSize the kernel size.
-	 * @param sigmaX the deviation in X for the Gaussian blur.
-	 * @param sigmaY the deviation in Y for the Gaussian blur.
-	 * @param borderType pixel extrapolation method.
-	 * @param dst the output image.
-	 */
-	private void cvGaussianblur(Mat src, Size kSize, double sigmaX, double sigmaY,
-                                int	borderType, Mat dst) {
-		if (kSize == null) {
-			kSize = new Size(1,1);
-		}
-		Imgproc.GaussianBlur(src, dst, kSize, sigmaX, sigmaY, borderType);
 	}
 
 	/**
