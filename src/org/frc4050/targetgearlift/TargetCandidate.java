@@ -13,15 +13,15 @@ public class TargetCandidate {
     private int[] score; // Holds individual test scores
 
     private static final double GAP_TO_TARGET_RATIO_W = 0.609756; // 6.25" / 10.25"
-    private static final double HEIGHT_TO_WIDTH_RATIO = 0.4;      // 2.0"  /  5.0"
+    //private static final double HEIGHT_TO_WIDTH_RATIO = 0.4;      // 2.0"  /  5.0"
 
     private static final int    NUM_OF_SCORES = 5;
 
     private static final double TEST_WEIGHT_1 = 100.0; // Horizontal alignment
     private static final double TEST_WEIGHT_2 =  60.0; // Widths are very similar
-    private static final double TEST_WEIGHT_3 =  40.0; // Heights are very similar
+    //private static final double TEST_WEIGHT_3 =  40.0; // Heights are very similar
     private static final double TEST_WEIGHT_4 = 100.0; // Target width vs. gap width
-    private static final double TEST_WEIGHT_5 =  40.0; // Width-to-Height ratio (average both contours)
+    //private static final double TEST_WEIGHT_5 =  40.0; // Width-to-Height ratio (average both contours)
     
     private double leftX;
     private double leftY;
@@ -34,7 +34,8 @@ public class TargetCandidate {
     private double rightWidth;
 
     public TargetCandidate(Rect candidate1, Rect candidate2, int index1, int index2) {
-        maxScore = (int) (TEST_WEIGHT_1 + TEST_WEIGHT_2 + TEST_WEIGHT_3 + TEST_WEIGHT_4 + TEST_WEIGHT_5);
+        //maxScore = (int) (TEST_WEIGHT_1 + TEST_WEIGHT_2 + TEST_WEIGHT_3 + TEST_WEIGHT_4 + TEST_WEIGHT_5);
+        maxScore = (int) (TEST_WEIGHT_1 + TEST_WEIGHT_2 + TEST_WEIGHT_4);
         scoreCandidatePair(candidate1, candidate2, index1, index2);
     }
 
@@ -61,9 +62,9 @@ public class TargetCandidate {
         
         score[0] = TestScore1();
         score[1] = TestScore2();
-        score[2] = TestScore3();
+        score[2] = 0; //TestScore3();
         score[3] = TestScore4();
-        score[4] = TestScore5();
+        score[4] = 0; //TestScore5();
 
         totalScore = 0;
         
@@ -115,7 +116,7 @@ public class TargetCandidate {
     
         return (int) (ratio * TEST_WEIGHT_2);
     }
-
+/*
     private int TestScore3() { // Heights are very similar
         double ratio = leftHeight / rightHeight;
     
@@ -125,7 +126,7 @@ public class TargetCandidate {
     
         return  (int) (ratio * TEST_WEIGHT_3);
     }
-
+*/
     private int TestScore4() { // Target width vs. gap width
         double targetWidth = (rightX + rightWidth) - leftX;
         double gapWidth = rightX - (leftX + leftWidth);
@@ -138,7 +139,7 @@ public class TargetCandidate {
         return (int) (ratio * TEST_WEIGHT_4);
         
     }
-
+/*
     private int TestScore5() { // Width-to-Height ratio (average both rects)
         double leftRatio = (leftWidth / leftHeight) / HEIGHT_TO_WIDTH_RATIO;
         
@@ -156,4 +157,5 @@ public class TargetCandidate {
 
         return (int) (ratio * TEST_WEIGHT_5);
     }
+*/
 }
