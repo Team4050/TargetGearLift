@@ -383,18 +383,18 @@ public class Main {
     }
     
     private String estimatedDistance(int heightL, int heightR){
-        int averageHeight = (heightL + heightR) / 2;
+        final int DIST_4FT_H = 48; 
+
+        int maxHeight = (heightL >= heightR) ? heightL : heightR;
         double distance = 0.0;
 
-        if (averageHeight < 60) {
-            distance = (0.0000555453*Math.pow(averageHeight,3)) - (0.00290273*Math.pow(averageHeight,2)) -
-                       (0.219377*averageHeight) + 15.6542;
+        if (maxHeight < DIST_4FT_H) {
+            distance = (-0.001675*Math.pow(maxHeight,3)) + (0.232*Math.pow(maxHeight,2)) - (11.767*maxHeight) + 262.0;
         } else {
-            distance = (-0.00000710617*Math.pow(averageHeight,3)) + (0.00212286*Math.pow(averageHeight,2)) -
-                       (0.239151*averageHeight) + 12.2385;
+            distance = (-0.0000628*Math.pow(maxHeight,3)) + (0.02*Math.pow(maxHeight,2)) - (2.36*maxHeight) + 122.0;
         }
 
-        return String.format("%1$,.2f", distance);
+        return String.format("%1$,.2f", distance / 12.0);
     }
 
     private void sendTargetingData(NetworkTable table, Boolean haveTarget, String pivot, 
