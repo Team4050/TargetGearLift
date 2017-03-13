@@ -245,7 +245,7 @@ public class Main {
                         imagePipeline.process(webcamMat);
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("01: " + ((currTimeStamp - frameStart) / 1e6));
+                        System.out.println("01: " + ((currTimeStamp - frameStart) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         // Get contours to score
@@ -255,7 +255,7 @@ public class Main {
                         rectCount = createBoundingRects(contourArray, rect, contourCount);
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("02: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("02: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         // Calculate the number of pair combinations
@@ -263,7 +263,7 @@ public class Main {
                         rectCandidates = new TargetCandidate[numOfPairs];
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("03: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("03: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         // Reset for current frame.
@@ -278,7 +278,7 @@ public class Main {
                         }
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("04: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("04: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         // Reset for current frame.
@@ -299,7 +299,7 @@ public class Main {
                         }
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("05: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("05: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         if (bestPairIndex == -1) { // No target found
@@ -331,16 +331,10 @@ public class Main {
                             pivot = String.format("%1$,.2f", (targetOffset / targetCenterX));
                             lateral = String.format("%1$,.2f", (1.0 - heightRatioRvL) * 2.0);
 
-                            System.out.println("distance(str): " + distance);
-                            System.out.println("distance(dbl): " + Double.parseDouble(distance));
-                            System.out.println("closeNufDist : " + closeNufDist);
-                            //if (stillGoing && Double.parseDouble(distance) < closeNufDist) {
-                            if (Double.parseDouble(distance) < closeNufDist) {
-                                System.out.println(">>> CLOSE ENOUGH <<<");
+                            if (stillGoing && Double.parseDouble(distance) < closeNufDist) {
                                 table.putBoolean("rpiCloseEnough", true);
                                 stillGoing = false;
                             }
-                            System.out.println();
                             
                             if ( (haveTarget != haveTargetPrev) || (distance != distancePrev) ||
                                  (pivot != pivotPrev) || (lateral != lateralPrev) ) {
@@ -355,7 +349,7 @@ public class Main {
                         }
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("06: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("06: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         if (!headless) {
@@ -384,11 +378,11 @@ public class Main {
                         }
 
                         currTimeStamp = System.nanoTime();
-                        //System.out.println("07: " + ((currTimeStamp - prevTimeStamp) / 1e6));
+                        System.out.println("07: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
-                        //System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6) +
-                        //                   " - Total: " + ((System.nanoTime() - begininng) / 1e6));
+                        System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6) +
+                                           " - Total: " + ((System.nanoTime() - begininng) / 1e6));
 
                     } else {
                         System.out.println(" -- Frame not captured -- Break!");
