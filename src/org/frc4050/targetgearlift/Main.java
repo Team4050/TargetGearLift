@@ -1,12 +1,7 @@
 package org.frc4050.targetgearlift;
 
-import java.awt.Image;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
+import com.github.lalyos.jfiglet.FigletFont;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.frc4050.targetgearlift.processing.GripPipeline;
 import org.frc4050.targetgearlift.processing.ImageProcessor;
 import org.frc4050.targetgearlift.util.GUI;
@@ -20,9 +15,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import com.github.lalyos.jfiglet.FigletFont;
-
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     static {
