@@ -26,6 +26,8 @@ public class GlobalVariables {
     private static int brightness;
     private static int contrast;
 
+    private static double closeNufDist;
+
     public static int getExposure() {
         return exposure;
     }
@@ -160,5 +162,9 @@ public class GlobalVariables {
 
     public void setCaptureDevice(int captureDevice) {
         CaptureDevice = captureDevice;
+    }
+
+    public double getCloseNufDist() {
+        return closeNufDist;
     }
 }

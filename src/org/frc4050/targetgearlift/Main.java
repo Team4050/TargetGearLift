@@ -64,6 +64,8 @@ public class Main {
     private int brightness;
     private int contrast;
 
+    private double closeNufDist;
+    
     private static String systemType;
 
     public static void main(String[] args) {
@@ -117,6 +119,8 @@ public class Main {
         brightness = gv.getBrightness();
         contrast = gv.getContrast();
 
+        closeNufDist = gv.getCloseNufDist();
+        
         System.out.println("[INFO] Prepare to be slammed with some of the most hard hitting facts you'll see all day!");
         System.out.println("       RoboRIO IP Address = " + roborioIPAddress);
         System.out.println("       Network Table Name = " + ntName);
@@ -135,8 +139,8 @@ public class Main {
         System.out.println("       Maximum Saturation = " + Double.toString(maxSat));
         System.out.println("       Minimum Value = " + Double.toString(minVal));
         System.out.println("       Maximum Value = " + Double.toString(maxVal));
+        System.out.println("       Distance to stop vision = " + Double.toString(closeNufDist));
         System.out.println("[INFO] Fact slamming over");
-
     }
 
     private void runMainLoop() {
@@ -220,12 +224,16 @@ public class Main {
                 System.out.println("ERROR: Camera failed to open.");
             }
 
+            boolean stillGoing = true;
+            
             int frameNumber = 1;
             long frameStart = 0;
             long currTimeStamp = 0;
             long prevTimeStamp = 0;
             long begininng = System.nanoTime();
         
+            writeInitialNTValues(table);
+            
             while(readingFromCamera) {
                 //if (capture.isOpened()) { /* Moved isOpened() logic outside of loop. */
 
@@ -323,6 +331,11 @@ public class Main {
                             pivot = String.format("%1$,.2f", (targetOffset / targetCenterX));
                             lateral = String.format("%1$,.2f", (1.0 - heightRatioRvL) * 2.0);
 
+                            if (stillGoing && Double.parseDouble(distance) < closeNufDist) {
+                                table.putBoolean("rpiCloseEnough", true);
+                                stillGoing = false;
+                            }
+                            
                             if ( (haveTarget != haveTargetPrev) || (distance != distancePrev) ||
                                  (pivot != pivotPrev) || (lateral != lateralPrev) ) {
                                 sendTargetingData(table, haveTarget, pivot, lateral, distance);
@@ -397,6 +410,14 @@ public class Main {
         return String.format("%1$,.2f", distance / 12.0);
     }
 
+    private void writeInitialNTValues(NetworkTable table) {
+        table.putBoolean("rpiCloseEnough", false);
+        table.putBoolean("rpiHaveTarget", false);
+        table.putString("rpiDistance", "0.00");
+        table.putString("rpiPivot", "0.00");
+        table.putString("rpiLateral", "0.00");
+    }
+    
     private void sendTargetingData(NetworkTable table, Boolean haveTarget, String pivot, 
                                    String lateral, String distance) {
         table.putBoolean("rpiHaveTarget", haveTarget);
