@@ -24,12 +24,14 @@ public class TargetCandidate {
     //private static final double TEST_WEIGHT_5 =  40.0; // Width-to-Height ratio (average both contours)
     
     private double leftX;
-    private double leftY;
+    private double leftTopY;
+    private double leftBottomY;
     private double leftHeight;
     private double leftWidth;
     
     private double rightX;
-    private double rightY;
+    private double rightTopY;
+    private double rightBottomY;
     private double rightHeight;
     private double rightWidth;
 
@@ -79,12 +81,14 @@ public class TargetCandidate {
             rectR = index2;
 
             leftX = rect1.x;
-            leftY = rect1.y;
+            leftTopY = rect1.y;
+            leftBottomY = rect1.br().y;
             leftHeight = rect1.height;
             leftWidth = rect1.width;
 
             rightX = rect2.x;
-            rightY = rect2.y;
+            rightTopY = rect2.y;
+            rightBottomY = rect2.br().y;
             rightHeight = rect2.height;
             rightWidth = rect2.width;
         } else {
@@ -92,19 +96,25 @@ public class TargetCandidate {
             rectR = index1;
 
             leftX = rect2.x;
-            leftY = rect2.y;
+            leftTopY = rect2.y;
+            leftBottomY = rect2.br().y;
             leftHeight = rect2.height;
             leftWidth = rect2.width;
 
             rightX = rect1.x;
-            rightY = rect1.y;
+            rightTopY = rect1.y;
+            rightBottomY = rect1.br().y;
             rightHeight = rect1.height;
             rightWidth = rect1.width;
         }
     }
     
     private int TestScore1() { // Horizontal alignment
-        return (int) (Math.max(0.0, TEST_WEIGHT_1 - ((Math.abs(leftY - rightY) / leftHeight) * TEST_WEIGHT_1)));
+        double maxHeight = (leftHeight >= rightHeight) ? leftHeight : rightHeight;
+        int score1Top = (int) (Math.max(0.0, TEST_WEIGHT_1 - ((Math.abs(leftTopY - rightTopY) / maxHeight) * TEST_WEIGHT_1)));
+        int score1Bottom = (int) (Math.max(0.0, TEST_WEIGHT_1 - ((Math.abs(leftBottomY - rightBottomY) / maxHeight) * TEST_WEIGHT_1)));
+        
+        return (score1Top >= score1Bottom) ? score1Top : score1Bottom;
     }
 
     private int TestScore2() { // Widths are very similar
