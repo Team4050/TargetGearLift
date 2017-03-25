@@ -1,7 +1,12 @@
 package org.frc4050.targetgearlift;
 
-import com.github.lalyos.jfiglet.FigletFont;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import java.awt.Image;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import org.frc4050.targetgearlift.processing.GripPipeline;
 import org.frc4050.targetgearlift.processing.ImageProcessor;
 import org.frc4050.targetgearlift.util.GUI;
@@ -15,10 +20,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.github.lalyos.jfiglet.FigletFont;
+
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Main {
     static {
@@ -239,29 +243,29 @@ public class Main {
                         frameStart = System.nanoTime();
                         
                         imagePipeline.process(webcamMat);
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("01: " + ((currTimeStamp - frameStart) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         // Get contours to score
                         contourArray = imagePipeline.findContoursOutput();
                         contourCount = contourArray.size();
                         rect = new Rect[contourCount];
                         rectCount = createBoundingRects(contourArray, rect, contourCount);
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("02: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         // Calculate the number of pair combinations
                         numOfPairs = ( (rectCount - 1) * rectCount) / 2;
                         rectCandidates = new TargetCandidate[numOfPairs];
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("03: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         // Reset for current frame.
                         scoreIndex = 0; 
 
@@ -272,11 +276,11 @@ public class Main {
                                 scoreIndex++;
                             }
                         }
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("04: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         // Reset for current frame.
                         highestScore = MIN_ACCEPTED_SCORE; 
                         bestPairIndex = -1;
@@ -293,14 +297,14 @@ public class Main {
                                 targetIndex2 = rectCandidates[i].getRectR();
                             }
                         }
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("05: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         if (bestPairIndex == -1) { // No target found
                             if (haveTargetPrev) {
-                                sendTargetingData(table, false, "0.00", "0.00", "0.00");
+                                sendTargetingData(table, false, "0.00", "0.00", "0.00", false);
                                 //System.out.println("[DEBUG] Wrote to NetworkTable");
 
                                 haveTargetPrev = false;
@@ -334,7 +338,7 @@ public class Main {
                             
                             if ( (haveTarget != haveTargetPrev) || (distance != distancePrev) ||
                                  (pivot != pivotPrev) || (lateral != lateralPrev) ) {
-                                sendTargetingData(table, haveTarget, pivot, lateral, distance);
+                                sendTargetingData(table, haveTarget, pivot, lateral, distance, !stillGoing);
                                 //System.out.println("[DEBUG] Wrote to NetworkTable");
                             }
                                
@@ -343,11 +347,11 @@ public class Main {
                             pivotPrev = pivot;
                             lateralPrev = lateral;
                         }
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("06: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
-
+                        */
                         if (!headless) {
                             HUD hudMat;
                             Mat augmentedImage;
@@ -372,14 +376,14 @@ public class Main {
 
                             hudFrame.pack(); // Resize the windows to fit the image
                         }
-
+                        /*
                         currTimeStamp = System.nanoTime();
                         System.out.println("07: " + ((currTimeStamp - prevTimeStamp) / 1e6));
                         prevTimeStamp = currTimeStamp;
 
                         System.out.println("Frame: " + frameNumber++ + " - Time: " + ((System.nanoTime() - frameStart) / 1e6) +
                                            " - Total: " + ((System.nanoTime() - begininng) / 1e6));
-
+                        */
                     } else {
                         System.out.println(" -- Frame not captured -- Break!");
                         break;
@@ -415,11 +419,13 @@ public class Main {
     }
     
     private void sendTargetingData(NetworkTable table, Boolean haveTarget, String pivot, 
-                                   String lateral, String distance) {
+                                   String lateral, String distance, Boolean closeNuf) {
         table.putBoolean("rpiHaveTarget", haveTarget);
         table.putString("rpiDistance", distance);
         table.putString("rpiPivot", pivot);
         table.putString("rpiLateral", lateral);
+        
+        System.out.println("T: " + String.valueOf(haveTarget) + " | D: " + distance + " | P: " + pivot + " | L: " + lateral + " | C: " + String.valueOf(closeNuf));
     }
     
     private int createBoundingRects(ArrayList<MatOfPoint> contourArray, Rect[] rect, int contourCount) {
