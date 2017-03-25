@@ -141,6 +141,7 @@ public class Main {
         System.out.println("       Maximum Value = " + Double.toString(maxVal));
         System.out.println("       Distance to stop vision = " + Double.toString(closeNufDist));
         System.out.println("[INFO] Fact slamming over");
+        System.out.println();
     }
 
     private void runMainLoop() {
@@ -425,7 +426,11 @@ public class Main {
         table.putString("rpiPivot", pivot);
         table.putString("rpiLateral", lateral);
         
-        System.out.println("T: " + String.valueOf(haveTarget) + " | D: " + distance + " | P: " + pivot + " | L: " + lateral + " | C: " + String.valueOf(closeNuf));
+        System.out.print("   T: " + ((haveTarget) ? "true " : "false") +
+                         " | D: " + ((Double.parseDouble(distance) < 10.0) ? " " : "") + distance +
+                         " | P: " + ((Double.parseDouble(pivot) >= 0.0) ? " " : "") + pivot +
+                         " | L: " + ((Double.parseDouble(lateral) >= 0.0) ? " " : "") + lateral +
+                         " | C: " + ((closeNuf) ? "true " : "false") + "\r");
     }
     
     private int createBoundingRects(ArrayList<MatOfPoint> contourArray, Rect[] rect, int contourCount) {
